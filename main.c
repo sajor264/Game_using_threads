@@ -6,6 +6,7 @@
 #define WINDOW_SIZE 800
  
 int main(int argc, char *argv[]){
+
     int difficulty, matrixSize;
     struct Matrix* matrix;
 
@@ -29,6 +30,11 @@ int main(int argc, char *argv[]){
         default:
             break;
     }
+
+    //struct Room* rooms[matrixSize];
+
+    matrix = createMap(matrix);
+
     printMatrix(matrix);
  
     // returns zero on success else non-zero
