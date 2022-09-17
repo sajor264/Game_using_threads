@@ -3,7 +3,7 @@
 #include <SDL2/SDL_timer.h>
 #include "logic.c"
 
-#define WINDOW_SIZE 800
+#define WINDOW_SIZE 900
  
 int main(int argc, char *argv[]){
 
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]){
     int close = 0;
  
     // speed of box
-    int speed = 300;
+    int speed = 30;
  
     // animation loop
     while (!close) {
@@ -100,16 +100,16 @@ int main(int argc, char *argv[]){
                 // keyboard API for key pressed
                 switch (event.key.keysym.scancode) {
                 case SDL_SCANCODE_W:
-                    dest.y -= speed / 30;
+                    dest.y -= speed;
                     break;
                 case SDL_SCANCODE_A:
-                    dest.x -= speed / 30;
+                    dest.x -= speed;
                     break;
                 case SDL_SCANCODE_S:
-                    dest.y += speed / 30;
+                    dest.y += speed;
                     break;
                 case SDL_SCANCODE_D:
-                    dest.x += speed / 30;
+                    dest.x += speed;
                     break;
                 default:
                     break;

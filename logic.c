@@ -40,6 +40,39 @@ Matrix* createMatrix(int mSize) {
     return m;
 }
 
+int getNeighboursQuantity(Matrix* m, int i, int j){
+    int neighbours = 0;
+    if(m -> data[(i-1)*(m->size) + j] == 1){
+        neighbours++;
+    }
+    if(m -> data[(i+1)*(m->size) + j] == 1){
+        neighbours++;
+    }
+    if(m -> data[i*(m->size) + (j-1)] == 1){
+        neighbours++;
+    }
+    if(m -> data[i*(m->size) + (j+1)] == 1){
+        neighbours++;
+    }
+    return neighbours;
+}
+
+Matrix* blockNextNeighbour(Matrix* m, int i, int j){
+    if(m -> data[(i-1)*(m->size) + j] == 0){
+        m -> data[(i-1)*(m->size) + j] = 2;
+    }
+    if(m -> data[(i+1)*(m->size) + j] == 0){
+        m -> data[(i+1)*(m->size) + j] = 2;
+    }
+    if(m -> data[i*(m->size) + (j-1)] == 0){
+        m -> data[i*(m->size) + (j-1)] = 2;
+    }
+    if(m -> data[i*(m->size) + (j+1)] == 0){
+        m -> data[i*(m->size) + (j+1)] = 2;
+    }
+    return m;
+}
+
 Matrix* createMap(Matrix* m){
     srand (time(NULL));
     int quantity, tempI, tempJ;
@@ -47,6 +80,8 @@ Matrix* createMap(Matrix* m){
     int remainingRooms = m -> size;
     int i = rand() % m -> size;
     int j = rand() % m -> size;
+    tempI = i;
+    tempJ = j;
     m -> data[i*(m->size) + j] = 1;
     remainingRooms--;
     while(remainingRooms > 0){
@@ -57,7 +92,7 @@ Matrix* createMap(Matrix* m){
             switch(rand() % 4){
                 case 0:
                     if(i-1 >= 0){
-                        if(m -> data[(i-1)*(m->size) + j] == 0){
+                        if((m -> data[(i-1)*(m->size) + j] == 0) && (getNeighboursQuantity(m,i,j)<3)){
                             m -> data[(i-1)*(m->size) + j] = 1;
                             tempI = i-1;
                             tempJ = j;
@@ -66,7 +101,7 @@ Matrix* createMap(Matrix* m){
                     }
                     break;
                 case 1:
-                    if(i+1 <= m -> size){
+                    if((i+1 < m -> size) && (getNeighboursQuantity(m,i,j)<3)){
                         if(m -> data[(i+1)*(m->size) + j] == 0){
                             m -> data[(i+1)*(m->size) + j] = 1;
                             tempI = i+1;
@@ -77,7 +112,7 @@ Matrix* createMap(Matrix* m){
                     break;
                 case 2:
                     if(j-1 >= 0){
-                        if(m -> data[i*(m->size) + (j-1)] == 0){
+                        if((m -> data[i*(m->size) + (j-1)] == 0) && (getNeighboursQuantity(m,i,j)<3)){
                             m -> data[i*(m->size) + (j-1)] = 1;
                             tempI = i;
                             tempJ = j-1;
@@ -86,8 +121,8 @@ Matrix* createMap(Matrix* m){
                     }
                     break;
                 case 3:
-                    if(j+1 <= m -> size){
-                        if(m -> data[i*(m->size) + (j+1)] == 0){
+                    if(j+1 < m -> size){
+                        if((m -> data[i*(m->size) + (j+1)] == 0) && (getNeighboursQuantity(m,i,j)<3)){
                             m -> data[i*(m->size) + (j+1)] = 1;
                             tempI = i;
                             tempJ = j+1;
@@ -95,6 +130,9 @@ Matrix* createMap(Matrix* m){
                         }
                     }
                     break;
+            }
+            if(getNeighboursQuantity(m, i, j) == 3){
+                m = blockNextNeighbour(m, i, j);
             }
         }
         i = tempI;
