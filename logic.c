@@ -3,13 +3,18 @@
 #include <unistd.h>
 #include <time.h>
 
-typedef struct Room{
+typedef struct Rooms{
     int pos[2];
     int neighbour1[2];
     int neighbour2[2];
     int neighbour3[2];
-    int hasMonster;
-}Room;
+
+    // 0 = tesoro, 1 = trampa, 2 = nada
+    int cofferType;
+
+    // 0 = spawn, 1 = normal, 2 = finish
+    int type;
+}Rooms[30];
 
 typedef struct Matrix{
     int size;
@@ -35,9 +40,7 @@ Matrix* createMatrix(int mSize) {
             matrix -> data[i*mSize + j] =  0;
         }
     }
-    struct Matrix *m;
-    m = matrix;
-    return m;
+    return matrix;
 }
 
 int getNeighboursQuantity(Matrix* m, int i, int j){
@@ -73,8 +76,104 @@ Matrix* blockNextNeighbour(Matrix* m, int i, int j){
     return m;
 }
 
-Matrix* createMap(Matrix* m){
-    srand (time(NULL));
+int getCofferType(){
+    int p = rand() % 10;
+    if(p <= 3){
+        return 0;
+    } else if(p > 3 && p <= 7){
+        return 1;
+    } else{
+        return 2;
+    }
+}
+
+void setNeighbours(Matrix* m, Rooms *rooms){
+    int i, j, z;
+    for(int r = 0; r < m -> size; r++) {
+        rooms[r] -> neighbour1[0] = -1;
+        rooms[r] -> neighbour1[1] = -1;
+        rooms[r] -> neighbour2[0] = -1;
+        rooms[r] -> neighbour2[1] = -1;
+        rooms[r] -> neighbour3[0] = -1;
+        rooms[r] -> neighbour3[1] = -1;
+
+        i = rooms[r] -> pos[0];
+        j = rooms[r] -> pos[1];
+        z = 0;
+        while(z < getNeighboursQuantity(m, i, j)){
+            if(m -> data[(i-1)*(m->size) + j] == 1){
+                if(z == 2){
+                    rooms[r] -> neighbour3[0] = i-1;
+                    rooms[r] -> neighbour3[1] = j;
+                    z++;
+                }
+                if(z == 1){
+                    rooms[r] -> neighbour2[0] = i-1;
+                    rooms[r] -> neighbour2[1] = j;
+                    z++;
+                }
+                if(z == 0){
+                    rooms[r] -> neighbour1[0] = i-1;
+                    rooms[r] -> neighbour1[1] = j;
+                    z++;
+                }
+            }
+            if(m -> data[(i+1)*(m->size) + j] == 1){
+                if(z == 2){
+                    rooms[r] -> neighbour3[0] = i+1;
+                    rooms[r] -> neighbour3[1] = j;
+                    z++;
+                }
+                if(z == 1){
+                    rooms[r] -> neighbour2[0] = i+1;
+                    rooms[r] -> neighbour2[1] = j;
+                    z++;
+                }
+                if(z == 0){
+                    rooms[r] -> neighbour1[0] = i+1;
+                    rooms[r] -> neighbour1[1] = j;
+                    z++;
+                }
+            }
+            if(m -> data[i*(m->size) + (j-1)] == 1){
+                if(z == 2){
+                    rooms[r] -> neighbour3[0] = i;
+                    rooms[r] -> neighbour3[1] = j-1;
+                    z++;
+                }
+                if(z == 1){
+                    rooms[r] -> neighbour2[0] = i;
+                    rooms[r] -> neighbour2[1] = j-1;
+                    z++;
+                }
+                if(z == 0){
+                    rooms[r] -> neighbour1[0] = i;
+                    rooms[r] -> neighbour1[1] = j-1;
+                    z++;
+                }
+            }
+            if(m -> data[i*(m->size) + (j+1)] == 1){
+                if(z == 2){
+                    rooms[r] -> neighbour3[0] = i;
+                    rooms[r] -> neighbour3[1] = j+1;
+                    z++;
+                }
+                if(z == 1){
+                    rooms[r] -> neighbour2[0] = i;
+                    rooms[r] -> neighbour2[1] = j+1;
+                    z++;
+                }
+                if(z == 0){
+                    rooms[r] -> neighbour1[0] = i;
+                    rooms[r] -> neighbour1[1] = j+1;
+                    z++;
+                }
+            }
+        }
+    }
+}
+
+Matrix* createMap(Matrix* m, Rooms *rooms){
     int quantity, tempI, tempJ;
     
     int remainingRooms = m -> size;
@@ -83,6 +182,12 @@ Matrix* createMap(Matrix* m){
     tempI = i;
     tempJ = j;
     m -> data[i*(m->size) + j] = 1;
+
+    rooms[m -> size - remainingRooms] -> pos[0] = tempI;
+    rooms[m -> size - remainingRooms] -> pos[1] = tempJ;
+    rooms[m -> size - remainingRooms] -> cofferType = 0;
+    rooms[m -> size - remainingRooms] -> type = 0;
+    
     remainingRooms--;
     while(remainingRooms > 0){
         // Genera un random entre 1 y 3 (numero de cuartos con los que va a limitar)
@@ -96,6 +201,16 @@ Matrix* createMap(Matrix* m){
                             m -> data[(i-1)*(m->size) + j] = 1;
                             tempI = i-1;
                             tempJ = j;
+
+                            rooms[m -> size - remainingRooms] -> pos[0] = tempI;
+                            rooms[m -> size - remainingRooms] -> pos[1] = tempJ;
+                            rooms[m -> size - remainingRooms] -> cofferType = getCofferType();
+                            if(remainingRooms == 1){
+                                rooms[m -> size - remainingRooms] -> type = 2;
+                            } else{
+                                rooms[m -> size - remainingRooms] -> type = 1;
+                            }
+
                             remainingRooms--;
                         }
                     }
@@ -106,6 +221,16 @@ Matrix* createMap(Matrix* m){
                             m -> data[(i+1)*(m->size) + j] = 1;
                             tempI = i+1;
                             tempJ = j;
+
+                            rooms[m -> size - remainingRooms] -> pos[0] = tempI;
+                            rooms[m -> size - remainingRooms] -> pos[1] = tempJ;
+                            rooms[m -> size - remainingRooms] -> cofferType = getCofferType();
+                            if(remainingRooms == 1){
+                                rooms[m -> size - remainingRooms] -> type = 2;
+                            } else{
+                                rooms[m -> size - remainingRooms] -> type = 1;
+                            }
+
                             remainingRooms--;
                         }
                     }
@@ -116,6 +241,16 @@ Matrix* createMap(Matrix* m){
                             m -> data[i*(m->size) + (j-1)] = 1;
                             tempI = i;
                             tempJ = j-1;
+
+                            rooms[m -> size - remainingRooms] -> pos[0] = tempI;
+                            rooms[m -> size - remainingRooms] -> pos[1] = tempJ;
+                            rooms[m -> size - remainingRooms] -> cofferType = getCofferType();
+                            if(remainingRooms == 1){
+                                rooms[m -> size - remainingRooms] -> type = 2;
+                            } else{
+                                rooms[m -> size - remainingRooms] -> type = 1;
+                            }
+
                             remainingRooms--;
                         }
                     }
@@ -126,6 +261,16 @@ Matrix* createMap(Matrix* m){
                             m -> data[i*(m->size) + (j+1)] = 1;
                             tempI = i;
                             tempJ = j+1;
+
+                            rooms[m -> size - remainingRooms] -> pos[0] = tempI;
+                            rooms[m -> size - remainingRooms] -> pos[1] = tempJ;
+                            rooms[m -> size - remainingRooms] -> cofferType = getCofferType();
+                            if(remainingRooms == 1){
+                                rooms[m -> size - remainingRooms] -> type = 2;
+                            } else{
+                                rooms[m -> size - remainingRooms] -> type = 1;
+                            }
+                            
                             remainingRooms--;
                         }
                     }
@@ -138,5 +283,7 @@ Matrix* createMap(Matrix* m){
         i = tempI;
         j = tempJ;
     }
+    setNeighbours(m, rooms);
+
     return m;
 }

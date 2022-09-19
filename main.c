@@ -6,11 +6,12 @@
 #define WINDOW_SIZE 900
  
 int main(int argc, char *argv[]){
+    srand (time(NULL));
 
     int difficulty, matrixSize;
     struct Matrix* matrix;
 
-    // Ask for the matrix size
+    // Asks for the matrix size
     printf("Seleccione la dificultad:\n1-Facil\n2-Medio\n3-Dificil\n");
     scanf("%d", &difficulty);
 
@@ -31,12 +32,15 @@ int main(int argc, char *argv[]){
             break;
     }
 
-    //struct Room* rooms[matrixSize];
+    Rooms *rooms = malloc(sizeof(struct Rooms));
+    matrix = createMap(matrix, rooms);
+    
+    // printMatrix(matrix);
+    // for(int i = 0; i < matrixSize; i++){
+    //     printf("POS:\tx = %d y = %d\n N1:\tx = %d y = %d\n N2:\tx = %d y = %d\n N3:\tx = %d y = %d\n\n", rooms[i] -> pos[0], rooms[i] -> pos[1], rooms[i] -> neighbour1[0], rooms[i] -> neighbour1[1], rooms[i] -> neighbour2[0], rooms[i] -> neighbour2[1], rooms[i] -> neighbour3[0], rooms[i] -> neighbour3[1]);
+    // }
+    // return 0;
 
-    matrix = createMap(matrix);
-
-    printMatrix(matrix);
- 
     // returns zero on success else non-zero
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         printf("error initializing SDL: %s\n", SDL_GetError());
