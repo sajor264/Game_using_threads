@@ -3,13 +3,15 @@
 #include <SDL2/SDL_timer.h>
 #include "logic.c"
 
-#define WINDOW_SIZE 800
+#define WINDOW_SIZE 900
  
 int main(int argc, char *argv[]){
+    srand (time(NULL));
+
     int difficulty, matrixSize;
     struct Matrix* matrix;
 
-    // Ask for the matrix size
+    // Asks for the matrix size
     printf("Seleccione la dificultad:\n1-Facil\n2-Medio\n3-Dificil\n");
     scanf("%d", &difficulty);
 
@@ -29,8 +31,16 @@ int main(int argc, char *argv[]){
         default:
             break;
     }
-    printMatrix(matrix);
- 
+
+    Rooms *rooms = malloc(sizeof(struct Rooms));
+    matrix = createMap(matrix, rooms);
+    
+    // printMatrix(matrix);
+    // for(int i = 0; i < matrixSize; i++){
+    //     printf("POS:\tx = %d y = %d\n N1:\tx = %d y = %d\n N2:\tx = %d y = %d\n N3:\tx = %d y = %d\n\n", rooms[i] -> pos[0], rooms[i] -> pos[1], rooms[i] -> neighbour1[0], rooms[i] -> neighbour1[1], rooms[i] -> neighbour2[0], rooms[i] -> neighbour2[1], rooms[i] -> neighbour3[0], rooms[i] -> neighbour3[1]);
+    // }
+    // return 0;
+
     // returns zero on success else non-zero
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         printf("error initializing SDL: %s\n", SDL_GetError());
@@ -75,7 +85,7 @@ int main(int argc, char *argv[]){
     int close = 0;
  
     // speed of box
-    int speed = 300;
+    int speed = 30;
  
     // animation loop
     while (!close) {
@@ -94,16 +104,16 @@ int main(int argc, char *argv[]){
                 // keyboard API for key pressed
                 switch (event.key.keysym.scancode) {
                 case SDL_SCANCODE_W:
-                    dest.y -= speed / 30;
+                    dest.y -= speed;
                     break;
                 case SDL_SCANCODE_A:
-                    dest.x -= speed / 30;
+                    dest.x -= speed;
                     break;
                 case SDL_SCANCODE_S:
-                    dest.y += speed / 30;
+                    dest.y += speed;
                     break;
                 case SDL_SCANCODE_D:
-                    dest.x += speed / 30;
+                    dest.x += speed;
                     break;
                 default:
                     break;
