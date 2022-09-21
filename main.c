@@ -33,11 +33,20 @@ int main(int argc, char *argv[]){
     }
 
     Rooms *rooms = malloc(sizeof(struct Rooms));
-    matrix = createMap(matrix, rooms);
+    createMap(matrix, rooms);
     
     // printMatrix(matrix);
+    // int counter = 0;
+    // for(int i = 0; i < matrixSize; i++) {
+    //     for(int j = 0; j < matrixSize; j++) {
+    //         if(matrix -> data[i*matrixSize + j] ==  1){
+    //             counter++;
+    //         }
+    //     }
+    // }
+    // printf("TOTAL: %d\n", counter);
     // for(int i = 0; i < matrixSize; i++){
-    //     printf("POS:\tx = %d y = %d\n N1:\tx = %d y = %d\n N2:\tx = %d y = %d\n N3:\tx = %d y = %d\n\n", rooms[i] -> pos[0], rooms[i] -> pos[1], rooms[i] -> neighbour1[0], rooms[i] -> neighbour1[1], rooms[i] -> neighbour2[0], rooms[i] -> neighbour2[1], rooms[i] -> neighbour3[0], rooms[i] -> neighbour3[1]);
+    //     printf("POS:\tx = %d y = %d\n N1:\tx = %d y = %d\n N2:\tx = %d y = %d\n N3:\tx = %d y = %d\n COFFER TYPE:\t %d\n ROOM TYPE:\t%d\n\n", rooms[i] -> pos[0], rooms[i] -> pos[1], rooms[i] -> neighbour1[0], rooms[i] -> neighbour1[1], rooms[i] -> neighbour2[0], rooms[i] -> neighbour2[1], rooms[i] -> neighbour3[0], rooms[i] -> neighbour3[1], rooms[i] -> cofferType, rooms[i] -> type);
     // }
     // return 0;
 

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include <stdbool.h>
 
 typedef struct Rooms{
     int pos[2];
@@ -32,7 +33,7 @@ void printMatrix(Matrix* m) {
 }
 
 Matrix* createMatrix(int mSize) {
-    struct Matrix* matrix = malloc(sizeof(struct Matrix));
+    Matrix* matrix = malloc(sizeof(struct Matrix));
     matrix -> size = mSize;
     matrix -> data = malloc(sizeof(int)*mSize*mSize);
     for(int i = 0; i < mSize; i++) {
@@ -77,7 +78,7 @@ Matrix* blockNextNeighbour(Matrix* m, int i, int j){
 }
 
 int getCofferType(){
-    int p = rand() % 10;
+    int p = (rand() % 10) + 1;
     if(p <= 3){
         return 0;
     } else if(p > 3 && p <= 7){
@@ -173,117 +174,119 @@ void setNeighbours(Matrix* m, Rooms *rooms){
     }
 }
 
-Matrix* createMap(Matrix* m, Rooms *rooms){
-    int quantity, tempI, tempJ;
-    
-    int remainingRooms = m -> size;
-    int i = rand() % m -> size;
-    int j = rand() % m -> size;
-    tempI = i;
-    tempJ = j;
-    m -> data[i*(m->size) + j] = 1;
-
-    rooms[m -> size - remainingRooms] -> pos[0] = tempI;
-    rooms[m -> size - remainingRooms] -> pos[1] = tempJ;
-    rooms[m -> size - remainingRooms] -> cofferType = 0;
-    rooms[m -> size - remainingRooms] -> type = 0;
-    
-    remainingRooms--;
-    while(remainingRooms > 0){
-        // Genera un random entre 1 y 3 (numero de cuartos con los que va a limitar)
-        quantity = (rand() % (3 - 1 + 1)) + 1;
-        for(int z = 0; z < quantity; z++){
-            // 0 = Arriba, 1 = Abajo, 2 = Izquierda, 3 = Derecha
-            switch(rand() % 4){
-                case 0:
-                    if(i-1 >= 0){
-                        if((m -> data[(i-1)*(m->size) + j] == 0) && (getNeighboursQuantity(m,i,j)<3)){
-                            m -> data[(i-1)*(m->size) + j] = 1;
-                            tempI = i-1;
-                            tempJ = j;
-
-                            rooms[m -> size - remainingRooms] -> pos[0] = tempI;
-                            rooms[m -> size - remainingRooms] -> pos[1] = tempJ;
-                            rooms[m -> size - remainingRooms] -> cofferType = getCofferType();
-                            if(remainingRooms == 1){
-                                rooms[m -> size - remainingRooms] -> type = 2;
-                            } else{
-                                rooms[m -> size - remainingRooms] -> type = 1;
-                            }
-
-                            remainingRooms--;
-                        }
-                    }
-                    break;
-                case 1:
-                    if((i+1 < m -> size) && (getNeighboursQuantity(m,i,j)<3)){
-                        if(m -> data[(i+1)*(m->size) + j] == 0){
-                            m -> data[(i+1)*(m->size) + j] = 1;
-                            tempI = i+1;
-                            tempJ = j;
-
-                            rooms[m -> size - remainingRooms] -> pos[0] = tempI;
-                            rooms[m -> size - remainingRooms] -> pos[1] = tempJ;
-                            rooms[m -> size - remainingRooms] -> cofferType = getCofferType();
-                            if(remainingRooms == 1){
-                                rooms[m -> size - remainingRooms] -> type = 2;
-                            } else{
-                                rooms[m -> size - remainingRooms] -> type = 1;
-                            }
-
-                            remainingRooms--;
-                        }
-                    }
-                    break;
-                case 2:
-                    if(j-1 >= 0){
-                        if((m -> data[i*(m->size) + (j-1)] == 0) && (getNeighboursQuantity(m,i,j)<3)){
-                            m -> data[i*(m->size) + (j-1)] = 1;
-                            tempI = i;
-                            tempJ = j-1;
-
-                            rooms[m -> size - remainingRooms] -> pos[0] = tempI;
-                            rooms[m -> size - remainingRooms] -> pos[1] = tempJ;
-                            rooms[m -> size - remainingRooms] -> cofferType = getCofferType();
-                            if(remainingRooms == 1){
-                                rooms[m -> size - remainingRooms] -> type = 2;
-                            } else{
-                                rooms[m -> size - remainingRooms] -> type = 1;
-                            }
-
-                            remainingRooms--;
-                        }
-                    }
-                    break;
-                case 3:
-                    if(j+1 < m -> size){
-                        if((m -> data[i*(m->size) + (j+1)] == 0) && (getNeighboursQuantity(m,i,j)<3)){
-                            m -> data[i*(m->size) + (j+1)] = 1;
-                            tempI = i;
-                            tempJ = j+1;
-
-                            rooms[m -> size - remainingRooms] -> pos[0] = tempI;
-                            rooms[m -> size - remainingRooms] -> pos[1] = tempJ;
-                            rooms[m -> size - remainingRooms] -> cofferType = getCofferType();
-                            if(remainingRooms == 1){
-                                rooms[m -> size - remainingRooms] -> type = 2;
-                            } else{
-                                rooms[m -> size - remainingRooms] -> type = 1;
-                            }
-                            
-                            remainingRooms--;
-                        }
-                    }
-                    break;
-            }
-            if(getNeighboursQuantity(m, i, j) == 3){
-                m = blockNextNeighbour(m, i, j);
+int getRemainingRooms(Matrix *m){
+    int quantity = m -> size;
+    for(int i = 0; i < (m -> size); i++){
+        for(int j = 0; j < (m -> size); j++){
+            if(m -> data[i*(m -> size) + j] == 1){
+                quantity--;
             }
         }
-        i = tempI;
-        j = tempJ;
     }
-    setNeighbours(m, rooms);
+    return quantity;
+}
 
-    return m;
+bool isValidPos(Matrix *m, int i, int j){
+    if((getNeighboursQuantity(m, i, j) <= 3) && (i >= 0) && (j >= 0) && (i < (m -> size)) && (j < (m -> size)) && (m -> data[i*(m->size) + j] == 0))
+        return true;
+    return false;
+}
+
+void putRoom(Matrix *m, int i, int j, Rooms *rooms){
+    int remainingRooms = getRemainingRooms(m);
+    m -> data[i*(m -> size) + j] = 1;
+    rooms[(m -> size) - remainingRooms] -> pos[0] = i;
+    rooms[(m -> size) - remainingRooms] -> pos[1] = j;
+    if(remainingRooms == 1){
+        rooms[(m -> size) - remainingRooms] -> cofferType = 2;
+        rooms[(m -> size) - remainingRooms] -> type = 2;
+    } else {
+        rooms[(m -> size) - remainingRooms] -> cofferType = getCofferType();
+        rooms[(m -> size) - remainingRooms] -> type = 1;
+    }
+}
+
+void removeRoom(Matrix *m, int i, int j, Rooms *rooms){
+    int remainingRooms = getRemainingRooms(m);
+    m -> data[i*(m -> size) + j] = 0;
+    rooms[(m -> size) - remainingRooms] -> pos[0] = -1;
+    rooms[(m -> size) - remainingRooms] -> pos[1] = -1;
+    rooms[(m -> size) - remainingRooms] -> cofferType = -1;
+    rooms[(m -> size) - remainingRooms] -> type = -1;
+}
+
+bool createMapAux(Matrix* m, int i, int j, Rooms *rooms){
+    bool result = false;
+
+    if(getRemainingRooms(m) <= 0)
+        return true;
+    switch (rand() % 4){
+        case 0:
+            if((isValidPos(m, i-1, j)) && (getNeighboursQuantity(m, i, j) <= 2)){
+                putRoom(m, i-1, j, rooms);                
+                if(createMapAux(m, i-1, j, rooms)){
+                    result = true;
+                } else{
+                    removeRoom(m, i-1, j, rooms);
+                    result = createMapAux(m, i, j, rooms);
+                }
+            }
+            break;
+        case 1:
+            if((isValidPos(m, i+1, j)) && (getNeighboursQuantity(m, i, j) <= 2)){
+                putRoom(m, i+1, j, rooms); 
+                if(createMapAux(m, i+1, j, rooms)){
+                    result = true;
+                } else{
+                    removeRoom(m, i+1, j, rooms);
+                    result = createMapAux(m, i, j, rooms);
+                }
+            }
+            break;
+        case 2:
+            if((isValidPos(m, i, j-1)) && (getNeighboursQuantity(m, i, j) <= 2)){
+                putRoom(m, i, j-1, rooms); 
+                if(createMapAux(m, i, j-1, rooms)){
+                    result = true;
+                } else{
+                    removeRoom(m, i, j-1, rooms);
+                    result = createMapAux(m, i, j, rooms);
+                }
+            }
+            break;
+        case 3:
+            if((isValidPos(m, i, j+1)) && (getNeighboursQuantity(m, i, j) <= 2)){
+                putRoom(m, i, j+1, rooms); 
+                if(createMapAux(m, i, j+1, rooms)){
+                    result = true;
+                } else{
+                    removeRoom(m, i, j+1, rooms);
+                    result = createMapAux(m, i, j, rooms);
+                }
+            }
+            break;
+        default:
+            break;
+    }
+    return result;
+}
+
+void createMap(Matrix* m, Rooms *rooms){    
+    int i = rand() % m -> size;
+    int j = rand() % m -> size;
+    m -> data[i*(m->size) + j] = 1;
+
+    rooms[0] -> pos[0] = i;
+    rooms[0] -> pos[1] = j;
+    rooms[0] -> cofferType = 2;
+    rooms[0] -> type = 0;
+
+    if(createMapAux(m, i, j, rooms)){
+        printf("MAP CREATED\n");
+        setNeighbours(m, rooms);
+    } else{
+        printf("ERROR: Map could not be created\n");
+        exit(-1);
+
+    }
 }
