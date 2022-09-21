@@ -68,27 +68,51 @@ int main(int argc, char *argv[]){
     SDL_Texture* heroe = SDL_CreateTextureFromSurface(rend, surface);
     SDL_FreeSurface(surface);
 
-    // creates a surface to load an image into the main memory
+    // creates background texture
     surface = IMG_Load("Images/background.jpg");
     SDL_Texture* background = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_FreeSurface(surface);
+
+    // creates trap dialog texture
+    surface = IMG_Load("Images/trapDialog.jpg");
+    SDL_Texture* trapDialog = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_FreeSurface(surface);
+
+    // creates treasure dialog texture
+    surface = IMG_Load("Images/treasureDialog.jpg");
+    SDL_Texture* treasureDialog = SDL_CreateTextureFromSurface(rend, surface);
     SDL_FreeSurface(surface);
  
     // let us control our image position
     // so that we can move it with our keyboard.
-    SDL_Rect dest;
+    SDL_Rect heroeRect;
+    SDL_Rect trapDialogRect;
+    SDL_Rect treasureDialogRect;
  
-    // connects our texture with dest to control position
-    SDL_QueryTexture(heroe, NULL, NULL, &dest.w, &dest.h);
+    // connects our texture with heroeRect to control position
+    SDL_QueryTexture(heroe, NULL, NULL, &heroeRect.w, &heroeRect.h);
+    SDL_QueryTexture(trapDialog, NULL, NULL, &trapDialogRect.w, &trapDialogRect.h);
+    SDL_QueryTexture(treasureDialog, NULL, NULL, &treasureDialogRect.w, &treasureDialogRect.h);
  
     // adjust height and width of our image box.
-    dest.w /= 8;
-    dest.h /= 8;
+    heroeRect.w /= 8;
+    heroeRect.h /= 8;
+
+    trapDialogRect.w /= 2;
+    trapDialogRect.h /= 2;
+
+    treasureDialogRect.w /= 2;
+    treasureDialogRect.h /= 2;
  
     // sets initial x-position of object
-    dest.x = (WINDOW_SIZE - dest.w) / 2;
+    heroeRect.x = (WINDOW_SIZE - heroeRect.w) / 2;
+    trapDialogRect.x = (WINDOW_SIZE - trapDialogRect.w) / 2;
+    treasureDialogRect.x = (WINDOW_SIZE - treasureDialogRect.w) / 2;
  
     // sets initial y-position of object
-    dest.y = (WINDOW_SIZE - dest.h) / 2;
+    heroeRect.y = (WINDOW_SIZE - heroeRect.h) / 2;
+    trapDialogRect.y = (WINDOW_SIZE - trapDialogRect.h) - 50;
+    treasureDialogRect.y = (WINDOW_SIZE - treasureDialogRect.h) - 50;
  
     // controls animation loop
     int close = 0;
@@ -113,16 +137,25 @@ int main(int argc, char *argv[]){
                 // keyboard API for key pressed
                 switch (event.key.keysym.scancode) {
                 case SDL_SCANCODE_W:
-                    dest.y -= speed;
+                    heroeRect.y -= speed;
                     break;
                 case SDL_SCANCODE_A:
-                    dest.x -= speed;
+                    heroeRect.x -= speed;
                     break;
                 case SDL_SCANCODE_S:
-                    dest.y += speed;
+                    heroeRect.y += speed;
                     break;
                 case SDL_SCANCODE_D:
-                    dest.x += speed;
+                    heroeRect.x += speed;
+                    break;
+                case SDL_SCANCODE_E:
+                    SDL_RenderClear(rend);
+                    SDL_RenderCopy(rend, background, NULL, NULL);
+                    SDL_RenderCopy(rend, heroe, NULL, &heroeRect);
+                    //SDL_RenderCopy(rend, treasureDialog, NULL, &treasureDialogRect);
+                    SDL_RenderCopy(rend, trapDialog, NULL, &trapDialogRect);
+                    SDL_RenderPresent(rend);
+                    sleep(3);
                     break;
                 default:
                     break;
@@ -131,25 +164,25 @@ int main(int argc, char *argv[]){
         }
  
         // right boundary
-        if (dest.x + dest.w > WINDOW_SIZE)
-            dest.x = WINDOW_SIZE - dest.w;
+        if (heroeRect.x + heroeRect.w > WINDOW_SIZE)
+            heroeRect.x = WINDOW_SIZE - heroeRect.w;
  
         // left boundary
-        if (dest.x < 0)
-            dest.x = 0;
+        if (heroeRect.x < 0)
+            heroeRect.x = 0;
  
         // bottom boundary
-        if (dest.y + dest.h > WINDOW_SIZE)
-            dest.y = WINDOW_SIZE - dest.h;
+        if (heroeRect.y + heroeRect.h > WINDOW_SIZE)
+            heroeRect.y = WINDOW_SIZE - heroeRect.h;
  
         // upper boundary
-        if (dest.y < 0)
-            dest.y = 0;
+        if (heroeRect.y < 0)
+            heroeRect.y = 0;
  
         // clears the screen
         SDL_RenderClear(rend);
         SDL_RenderCopy(rend, background, NULL, NULL);
-        SDL_RenderCopy(rend, heroe, NULL, &dest);
+        SDL_RenderCopy(rend, heroe, NULL, &heroeRect);
         
         // triggers the double buffers
         // for multiple rendering
@@ -162,6 +195,8 @@ int main(int argc, char *argv[]){
     // destroy textures
     SDL_DestroyTexture(heroe);
     SDL_DestroyTexture(background);
+    SDL_DestroyTexture(trapDialog);
+    SDL_DestroyTexture(treasureDialog);
  
     // destroy renderer
     SDL_DestroyRenderer(rend);
