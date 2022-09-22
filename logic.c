@@ -9,6 +9,7 @@ typedef struct Rooms{
     int neighbour1[2];
     int neighbour2[2];
     int neighbour3[2];
+    bool isCofferOpened;
 
     // 0 = tesoro, 1 = trampa, 2 = nada
     int cofferType;
@@ -21,6 +22,7 @@ typedef struct Matrix{
     int size;
     int* data;
 }Matrix;
+
 
 void printMatrix(Matrix* m) {
     for(int i = 0; i < m->size; i++) {
@@ -59,22 +61,6 @@ int getNeighboursQuantity(Matrix* m, int i, int j){
         neighbours++;
     }
     return neighbours;
-}
-
-Matrix* blockNextNeighbour(Matrix* m, int i, int j){
-    if(m -> data[(i-1)*(m->size) + j] == 0){
-        m -> data[(i-1)*(m->size) + j] = 2;
-    }
-    if(m -> data[(i+1)*(m->size) + j] == 0){
-        m -> data[(i+1)*(m->size) + j] = 2;
-    }
-    if(m -> data[i*(m->size) + (j-1)] == 0){
-        m -> data[i*(m->size) + (j-1)] = 2;
-    }
-    if(m -> data[i*(m->size) + (j+1)] == 0){
-        m -> data[i*(m->size) + (j+1)] = 2;
-    }
-    return m;
 }
 
 int getCofferType(){
@@ -197,6 +183,7 @@ void putRoom(Matrix *m, int i, int j, Rooms *rooms){
     m -> data[i*(m -> size) + j] = 1;
     rooms[(m -> size) - remainingRooms] -> pos[0] = i;
     rooms[(m -> size) - remainingRooms] -> pos[1] = j;
+    rooms[(m -> size) - remainingRooms] -> isCofferOpened = false;
     if(remainingRooms == 1){
         rooms[(m -> size) - remainingRooms] -> cofferType = 2;
         rooms[(m -> size) - remainingRooms] -> type = 2;
@@ -217,7 +204,6 @@ void removeRoom(Matrix *m, int i, int j, Rooms *rooms){
 
 bool createMapAux(Matrix* m, int i, int j, Rooms *rooms){
     bool result = false;
-
     if(getRemainingRooms(m) <= 0)
         return true;
     switch (rand() % 4){
@@ -272,6 +258,7 @@ bool createMapAux(Matrix* m, int i, int j, Rooms *rooms){
 }
 
 void createMap(Matrix* m, Rooms *rooms){    
+    bool isCreated = false;
     int i = rand() % m -> size;
     int j = rand() % m -> size;
     m -> data[i*(m->size) + j] = 1;
@@ -281,22 +268,17 @@ void createMap(Matrix* m, Rooms *rooms){
     rooms[0] -> cofferType = 2;
     rooms[0] -> type = 0;
 
-    if(createMapAux(m, i, j, rooms)){
-        printf("MAP CREATED\n");
-        setNeighbours(m, rooms);
-    } else{
-        printf("ERROR: Map could not be created\n");
-        exit(-1);
-
+    while(!isCreated){
+        isCreated = createMapAux(m, i, j, rooms);
     }
+    setNeighbours(m, rooms);
 }
 
-int indexCurrentRoom(Rooms *rooms,int size, int xPlayer, int yPlayer){
+int indexCurrentRoom(Rooms *rooms, int size, int xPlayer, int yPlayer){
     for(int i = 0; i < size; i++){
         if ((xPlayer == rooms[i] -> pos[0]) && (yPlayer == rooms[i] -> pos[1])){
              return i;
         }
-       
     }
     return -1;
 }
