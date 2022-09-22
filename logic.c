@@ -23,6 +23,12 @@ typedef struct Matrix{
     int* data;
 }Matrix;
 
+typedef struct Hero{
+    int posX;
+    int posY;
+    int life;
+    int attack;
+}Hero;
 
 void printMatrix(Matrix* m) {
     for(int i = 0; i < m->size; i++) {
