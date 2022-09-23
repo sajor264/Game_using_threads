@@ -9,18 +9,14 @@
 int main(int argc, char *argv[]){
     srand (time(NULL));
 
-    int n1 = -1;
-    int n2 = -1;
-    int n3 = -1;
-    int roomCofferType = -1;
-    bool isCofferOpened = false;
-
     int difficulty, matrixSize;
     struct Matrix* matrix;
 
     // Asks for the matrix size
     printf("Seleccione la dificultad:\n1-Facil\n2-Medio\n3-Dificil\n");
+    printf("Dificultad: ");
     scanf("%d", &difficulty);
+    printf("--------------------------\n\n");
 
     switch (difficulty){
         case 1:
@@ -39,37 +35,6 @@ int main(int argc, char *argv[]){
             break;
     }
 
-    Rooms *rooms = malloc(sizeof(struct Rooms));
-    createMap(matrix, rooms);
-    
-    printMatrix(matrix);
-    // int counter = 0;
-    // for(int i = 0; i < matrixSize; i++) {
-    //     for(int j = 0; j < matrixSize; j++) {
-    //         if(matrix -> data[i*matrixSize + j] ==  1){
-    //             counter++;
-    //         }
-    //     }
-    // }
-    // printf("TOTAL: %d\n", counter);
-    for(int i = 0; i < matrixSize; i++){
-    printf("POS:\tx = %d y = %d\n N1:\tx = %d y = %d\n N2:\tx = %d y = %d\n N3:\tx = %d y = %d\n COFFER TYPE:\t %d\n ROOM TYPE:\t%d\n\n", rooms[i] -> pos[0], rooms[i] -> pos[1], rooms[i] -> neighbour1[0], rooms[i] -> neighbour1[1], rooms[i] -> neighbour2[0], rooms[i] -> neighbour2[1], rooms[i] -> neighbour3[0], rooms[i] -> neighbour3[1], rooms[i] -> cofferType, rooms[i] -> type);
-    }    
-    return 0;
-
-    Hero heroStruct;
-    heroStruct.posX = rooms[0] -> pos[0];
-    heroStruct.posY = rooms[0] -> pos[1];
-    heroStruct.life = 5;
-    heroStruct.attack = 1;
-
-    // returns zero on success else non-zero
-
-    Hero heroStruct;
-    heroStruct.posX = rooms[0] -> pos[0];
-    heroStruct.posY = rooms[0] -> pos[1];
-    heroStruct.life = 5;
-    heroStruct.attack = 1;
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         printf("error initializing SDL: %s\n", SDL_GetError());
@@ -77,11 +42,8 @@ int main(int argc, char *argv[]){
     
     SDL_Window* win = SDL_CreateWindow("GAME", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
  
-    // triggers the program that controls
-    // your graphics hardware and sets flags
     Uint32 render_flags = SDL_RENDERER_ACCELERATED;
  
-    // creates a renderer to render our images
     SDL_Renderer* rend = SDL_CreateRenderer(win, -1, render_flags);
  
     // creates heroe texture
@@ -139,8 +101,7 @@ int main(int argc, char *argv[]){
     SDL_Texture* closedTrap = SDL_CreateTextureFromSurface(rend, surface);
     SDL_FreeSurface(surface);
  
-    // let us control our image position
-    // so that we can move it with our keyboard.
+    // Let us control our image position
     SDL_Rect heroeRect;
     SDL_Rect monsterRect;
     SDL_Rect trapDialogRect;
@@ -152,7 +113,7 @@ int main(int argc, char *argv[]){
     SDL_Rect closedTrapRect;
     SDL_Rect openedTreasureRect;
  
-    // connects our texture with heroeRect to control position
+    // connects our textures with Rects to control position
     SDL_QueryTexture(heroe, NULL, NULL, &heroeRect.w, &heroeRect.h);
     SDL_QueryTexture(monster, NULL, NULL, &monsterRect.w, &monsterRect.h);
     SDL_QueryTexture(trapDialog, NULL, NULL, &trapDialogRect.w, &trapDialogRect.h);
@@ -218,15 +179,22 @@ int main(int argc, char *argv[]){
     // controls animation loop
     int close = 0;
 
-    // animation loop
+    // Create Map and Rooms
+    Rooms *rooms = malloc(sizeof(struct Rooms));
+    createMap(matrix, rooms);
+    
+    //printMatrix(matrix);
+    // for(int i = 0; i < matrixSize; i++){
+    // printf("POS:\tx = %d y = %d\n N1:\tx = %d y = %d\n N2:\tx = %d y = %d\n N3:\tx = %d y = %d\n COFFER TYPE:\t %d\n ROOM TYPE:\t%d\n\n", rooms[i] -> pos[0], rooms[i] -> pos[1], rooms[i] -> neighbour1[0], rooms[i] -> neighbour1[1], rooms[i] -> neighbour2[0], rooms[i] -> neighbour2[1], rooms[i] -> neighbour3[0], rooms[i] -> neighbour3[1], rooms[i] -> cofferType, rooms[i] -> type);
+    // } 
+
+    Hero heroStruct;
+    heroStruct.posX = rooms[0] -> pos[0];
+    heroStruct.posY = rooms[0] -> pos[1];
+    heroStruct.life = 5;
+    heroStruct.attack = 1;
 
     int index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX, heroStruct.posY);
-
-        // printf("ROOM:\tx = %d y = %d\n", rooms[index]->pos[0],rooms[index]->pos[1]);
-        // printf("N1:\tx = %d y = %d\n", rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-        // printf("N2:\tx = %d y = %d\n", rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-        // printf("N3:\tx = %d y = %d\n", rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-
     int n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
     int n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
     int n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
@@ -234,13 +202,17 @@ int main(int argc, char *argv[]){
     bool isCofferOpened = rooms[index] -> isCofferOpened;
     int monsterID = rooms[index] -> monsterId;
 
-
     while (!close) {
+        SDL_Event event;
+
         if(heroStruct.life == 0){
             printf("GAME OVER\n");
             close = 1;
         }
-        SDL_Event event;
+        if((heroStruct.posX == rooms[matrixSize-1] -> pos[0]) && (heroStruct.posY == rooms[matrixSize-1] -> pos[1])){
+            printf("\n\nYOU WON!!\n\n");
+            close = 1;
+        }
  
         // Events management
         while (SDL_PollEvent(&event)) {
@@ -252,10 +224,9 @@ int main(int argc, char *argv[]){
                 break;
  
             case SDL_KEYDOWN:
-                // keyboard API for key pressed
                 switch (event.key.keysym.scancode) {
                 case SDL_SCANCODE_W:
-                    if(n1 == 2){
+                    if(n1 == 2 || n2 == 2 || n3 == 2){
                         heroStruct.posX--;
                         index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
                         n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
@@ -263,34 +234,11 @@ int main(int argc, char *argv[]){
                         n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
                         roomCofferType = rooms[index] -> cofferType;
                         isCofferOpened = rooms[index] -> isCofferOpened;
+                        monsterID = rooms[index] -> monsterId;
                     }
-                    if(n2 == 2){
-                        heroStruct.posX--;
-                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
-                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                        roomCofferType = rooms[index] -> cofferType;
-                        isCofferOpened = rooms[index] -> isCofferOpened;
-                    }
-                    if(n3 == 2){
-                        heroStruct.posX--;
-                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
-                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                        roomCofferType = rooms[index] -> cofferType;
-                        isCofferOpened = rooms[index] -> isCofferOpened;
-                    }
-                    printf("INDEX: %d\n", index);
-                    printf("ROOM:\tx = %d y = %d\n", rooms[index]->pos[0],rooms[index]->pos[1]);
-                    printf("N1:\tx = %d y = %d\n", rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                    printf("N2:\tx = %d y = %d\n", rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                    printf("N3:\tx = %d y = %d\n", rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                    printf("HEROE POS:\tx = %d y = %d\n", heroStruct.posX, heroStruct.posY);
                     break;
                 case SDL_SCANCODE_A:
-                    if(n1 == 0){
+                    if(n1 == 0 || n2 == 0 || n3 == 0){
                         heroStruct.posY--;
                         index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
                         n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
@@ -298,34 +246,11 @@ int main(int argc, char *argv[]){
                         n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
                         roomCofferType = rooms[index] -> cofferType;
                         isCofferOpened = rooms[index] -> isCofferOpened;
+                        monsterID = rooms[index] -> monsterId;
                     }
-                    if(n2 == 0){
-                        heroStruct.posY--;
-                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
-                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                        roomCofferType = rooms[index] -> cofferType;
-                        isCofferOpened = rooms[index] -> isCofferOpened;
-                    }
-                    if(n3 == 0){
-                        heroStruct.posY--;
-                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
-                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                        roomCofferType = rooms[index] -> cofferType;
-                        isCofferOpened = rooms[index] -> isCofferOpened;
-                    }
-                    printf("INDEX: %d\n", index);
-                    printf("ROOM:\tx = %d y = %d\n", rooms[index]->pos[0],rooms[index]->pos[1]);
-                    printf("N1:\tx = %d y = %d\n", rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                    printf("N2:\tx = %d y = %d\n", rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                    printf("N3:\tx = %d y = %d\n", rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                    printf("HEROE POS:\tx = %d y = %d\n", heroStruct.posX, heroStruct.posY);
                     break;
                 case SDL_SCANCODE_S:
-                    if(n1 == 3){
+                    if(n1 == 3 || n2 == 3 || n3 == 3){
                         heroStruct.posX++;
                         index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
                         n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
@@ -333,34 +258,11 @@ int main(int argc, char *argv[]){
                         n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
                         roomCofferType = rooms[index] -> cofferType;
                         isCofferOpened = rooms[index] -> isCofferOpened;
+                        monsterID = rooms[index] -> monsterId;
                     }
-                    if(n2 == 3){
-                        heroStruct.posX++;
-                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
-                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                        roomCofferType = rooms[index] -> cofferType;
-                        isCofferOpened = rooms[index] -> isCofferOpened;
-                    }
-                    if(n3 == 3){
-                        heroStruct.posX++;
-                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
-                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                        roomCofferType = rooms[index] -> cofferType;
-                        isCofferOpened = rooms[index] -> isCofferOpened;
-                    }
-                    printf("INDEX: %d\n", index);
-                    printf("ROOM:\tx = %d y = %d\n", rooms[index]->pos[0],rooms[index]->pos[1]);
-                    printf("N1:\tx = %d y = %d\n", rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                    printf("N2:\tx = %d y = %d\n", rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                    printf("N3:\tx = %d y = %d\n", rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                    printf("HEROE POS:\tx = %d y = %d\n", heroStruct.posX, heroStruct.posY);
                     break;
                 case SDL_SCANCODE_D:
-                    if(n1 == 1){
+                    if(n1 == 1 || n2 == 1 || n3 == 1){
                         heroStruct.posY++;
                         index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
                         n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
@@ -368,31 +270,8 @@ int main(int argc, char *argv[]){
                         n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
                         roomCofferType = rooms[index] -> cofferType;
                         isCofferOpened = rooms[index] -> isCofferOpened;
+                        monsterID = rooms[index] -> monsterId;
                     }
-                    if(n2 == 1){
-                        heroStruct.posY++;
-                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
-                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                        roomCofferType = rooms[index] -> cofferType;
-                        isCofferOpened = rooms[index] -> isCofferOpened;
-                    }
-                    if(n3 == 1){
-                        heroStruct.posY++;
-                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
-                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                        roomCofferType = rooms[index] -> cofferType;
-                        isCofferOpened = rooms[index] -> isCofferOpened;
-                    }
-                    printf("INDEX: %d\n", index);
-                    printf("ROOM:\tx = %d y = %d\n", rooms[index]->pos[0],rooms[index]->pos[1]);
-                    printf("N1:\tx = %d y = %d\n", rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                    printf("N2:\tx = %d y = %d\n", rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                    printf("N3:\tx = %d y = %d\n", rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                    printf("HEROE POS:\tx = %d y = %d\n", heroStruct.posX, heroStruct.posY);
                     break;
                 case SDL_SCANCODE_E:                    
                     if(rooms[index] -> cofferType == 0){
@@ -427,90 +306,78 @@ int main(int argc, char *argv[]){
         SDL_SetRenderDrawColor(rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
         SDL_RenderClear(rend);
 
+        // Renderiza el cuarto
         SDL_RenderCopy(rend, roomTexture, NULL, NULL);
            
+        // Renderiza las puertas
         if(n1 == 0){
-            //printf ("vecino izquierdo\n");
+            // Izquierda
              door1Rect.x = 80;
              door1Rect.y =(WINDOW_HEIGHT -  door1Rect.h) / 2;
              SDL_RenderCopy(rend, door1, NULL, &door1Rect);
            
         }else if(n1 == 1){
-            //printf("vecino derecho\n"); 
+            // Derecha
              door1Rect.x = (WINDOW_WIDTH -  door1Rect.w) - 80;
              door1Rect.y =(WINDOW_HEIGHT -  door1Rect.h) / 2;
              SDL_RenderCopy(rend, door1, NULL, &door1Rect);
             
         }else if(n1 == 2){
-            //printf("vecino arriba\n"); 
+            // Arriba
              door1Rect.x = (WINDOW_WIDTH -  door1Rect.w) / 2;
              door1Rect.y =0;
              SDL_RenderCopy(rend, door1, NULL, &door1Rect);
             
         }else if(n1 == 3){
-            //printf("vecino abajo\n"); 
+            // Abajo
              door1Rect.x = (WINDOW_WIDTH -  door1Rect.w) / 2;
              door1Rect.y =(WINDOW_HEIGHT -  door1Rect.h);
              SDL_RenderCopy(rend, door1, NULL, &door1Rect);
         
-        }else{
-            //printf("no es vecino \n"); 
         }
 
         if(n2 == 0){
-            //printf ("vecino izquierdo\n");
              door2Rect.x = 80;
              door2Rect.y =(WINDOW_HEIGHT -  door2Rect.h) / 2;
              SDL_RenderCopy(rend, door2, NULL, &door2Rect);
             
         }else if(n2 == 1){
-            //printf("vecino derecho\n"); 
              door2Rect.x = (WINDOW_WIDTH -  door2Rect.w) - 80;
              door2Rect.y =(WINDOW_HEIGHT -  door2Rect.h) / 2;
             SDL_RenderCopy(rend, door2, NULL, &door2Rect);
 
         }else if(n2 == 2){
-            //printf("vecino arriba\n"); 
              door2Rect.x = (WINDOW_WIDTH -  door2Rect.w) / 2;
              door2Rect.y =0;
             SDL_RenderCopy(rend, door2, NULL, &door2Rect);
             
         }else if(n2 == 3){
-            //printf("vecino abajo\n"); 
              door2Rect.x = (WINDOW_WIDTH -  door2Rect.w) / 2;
              door2Rect.y =(WINDOW_HEIGHT -  door2Rect.h);
             SDL_RenderCopy(rend, door2, NULL, &door2Rect);
         
-        }else{
-            //printf("no es vecino \n"); 
         }
 
         if(n3 == 0){
-            //printf ("vecino izquierdo\n");
              door3Rect.x = 80;
              door3Rect.y =(WINDOW_HEIGHT -  door3Rect.h) / 2;
              SDL_RenderCopy(rend, door3, NULL, &door3Rect);
            
         }else if(n3 == 1){
-            //printf("vecino derecho\n"); 
              door3Rect.x = (WINDOW_WIDTH -  door3Rect.w) - 80;
              door3Rect.y =(WINDOW_HEIGHT -  door3Rect.h) / 2;
             SDL_RenderCopy(rend, door3, NULL, &door3Rect);
 
         }else if(n3 == 2){
-            //printf("vecino arriba\n"); 
              door3Rect.x = (WINDOW_WIDTH -  door3Rect.w) / 2;
              door3Rect.y =0;
             SDL_RenderCopy(rend, door3, NULL, &door3Rect);
             
         }else if(n3 == 3){
-            //printf("vecino abajo\n"); 
-             door3Rect.x = (WINDOW_WIDTH -  door3Rect.w) / 2;
-             door3Rect.y =(WINDOW_HEIGHT -  door3Rect.h);
+            door3Rect.x = (WINDOW_WIDTH -  door3Rect.w) / 2;
+            door3Rect.y =(WINDOW_HEIGHT -  door3Rect.h);
             SDL_RenderCopy(rend, door3, NULL, &door3Rect);
         
-        }else{
-            //printf("no es vecino \n"); 
         }
 
         // Renderiza los tesoros / trampas
@@ -530,6 +397,7 @@ int main(int argc, char *argv[]){
             SDL_RenderCopy(rend, monster, NULL, &monsterRect);
         }
 
+        // Renderiza el heroe
         SDL_RenderCopy(rend, heroe, NULL, &heroeRect);
       
         
@@ -542,13 +410,18 @@ int main(int argc, char *argv[]){
     }
  
     // destroy textures
-    
-    
     SDL_DestroyTexture(heroe);
     SDL_DestroyTexture(roomTexture);
     SDL_DestroyTexture(trapDialog);
     SDL_DestroyTexture(treasureDialog);
- 
+    SDL_DestroyTexture(monster);
+    SDL_DestroyTexture(door1);
+    SDL_DestroyTexture(door2);
+    SDL_DestroyTexture(door3);
+    SDL_DestroyTexture(openedTreasure);
+    SDL_DestroyTexture(closedTreasure);
+    SDL_DestroyTexture(closedTrap);
+
     // destroy renderer
     SDL_DestroyRenderer(rend);
  

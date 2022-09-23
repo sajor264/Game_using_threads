@@ -191,7 +191,7 @@ void putRoom(Matrix *m, int i, int j, Rooms *rooms){
     rooms[(m -> size) - remainingRooms] -> pos[0] = i;
     rooms[(m -> size) - remainingRooms] -> pos[1] = j;
     rooms[(m -> size) - remainingRooms] -> isCofferOpened = false;
-    rooms[(m -> size) - remainingRooms] -> monsterId = 1;
+    rooms[(m -> size) - remainingRooms] -> monsterId = -1;
     if(remainingRooms == 1){
         rooms[(m -> size) - remainingRooms] -> cofferType = 2;
         rooms[(m -> size) - remainingRooms] -> type = 2;
@@ -275,6 +275,8 @@ void createMap(Matrix* m, Rooms *rooms){
     rooms[0] -> pos[1] = j;
     rooms[0] -> cofferType = 2;
     rooms[0] -> type = 0;
+    rooms[0] -> isCofferOpened = false;
+    rooms[0] -> monsterId = -1;
 
     while(!isCreated){
         isCreated = createMapAux(m, i, j, rooms);
