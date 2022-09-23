@@ -282,72 +282,33 @@ void createMap(Matrix* m, Rooms *rooms){
 
 int indexCurrentRoom(Rooms *rooms, int size, int xPlayer, int yPlayer){
     for(int i = 0; i < size; i++){
-        if ((xPlayer == rooms[i] -> pos[0]) && (yPlayer == rooms[i] -> pos[1])){
+        if ((xPlayer == (rooms[i] -> pos[0])) && (yPlayer == (rooms[i] -> pos[1]))){
              return i;
         }
     }
     return -1;
 }
 
-int isNeighborRight(int xRoom , int xNeighbor){
-   if (xNeighbor == -1) {
-    return -1;
-   } 
-   else if  (xRoom == xNeighbor){
-    return 0;
-   } 
-   else if (xRoom < xNeighbor){
-    // right
-    return 1;
-   } else{
-    // left
-    return 2;
-    }
-
-}
-
-int isNeighborUp(int yRoom , int yNeighbor){
-   if (yNeighbor == -1) {
-    return -1;
-   }
-   else if (yRoom == yNeighbor){
-    return 0;
-   }
-   else if (yRoom < yNeighbor){
-    // up
-    return 1;
-   } else{
-    // down
-    return 2;
-    }
-
-}
  int locateNeighbor(int xRoom ,int yRoom ,int xNeighbor, int yNeighbor){
-    int posX = isNeighborRight(xRoom , xNeighbor);
-    int posY = isNeighborUp(yRoom, yNeighbor);
-
-    if ((posX == -1) || (posY == -1) ){
-        //error 
-       return -1;
+    if(xNeighbor == -1 || yNeighbor == -1){
+        return -1;
     }
-    if(posX == 0){
-        if(posY == 0){
-            //error 
-            return -1;
-        }else if(posY == 1){
-            //up
-            return 2;
-        }else{
-            // down
-            return 3; 
-        }
-
-    }else if(posX == 1){
-        // right
-        return 1;
-    }else{
-         // left
+    if(xRoom-1 == xNeighbor){
+        // UP
+        return 2;
+    }
+    if(xRoom+1 == xNeighbor){
+        // DOWN
+        return 3;
+    }
+    if(yRoom-1 == yNeighbor){
+        // LEFT
         return 0;
     }
-
+    if(yRoom+1 == yNeighbor){
+        // RIGHT
+        return 1;
+    } else{
+        return -1;
+    }
  }

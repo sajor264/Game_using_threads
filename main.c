@@ -9,6 +9,12 @@
 int main(int argc, char *argv[]){
     srand (time(NULL));
 
+    int n1 = -1;
+    int n2 = -1;
+    int n3 = -1;
+    int roomCofferType = -1;
+    bool isCofferOpened = false;
+
     int difficulty, matrixSize;
     struct Matrix* matrix;
 
@@ -36,7 +42,7 @@ int main(int argc, char *argv[]){
     Rooms *rooms = malloc(sizeof(struct Rooms));
     createMap(matrix, rooms);
     
-    // printMatrix(matrix);
+    printMatrix(matrix);
     // int counter = 0;
     // for(int i = 0; i < matrixSize; i++) {
     //     for(int j = 0; j < matrixSize; j++) {
@@ -52,9 +58,17 @@ int main(int argc, char *argv[]){
     // return 0;
 
     // returns zero on success else non-zero
+
+    Hero heroStruct;
+    heroStruct.posX = rooms[0] -> pos[0];
+    heroStruct.posY = rooms[0] -> pos[1];
+    heroStruct.life = 5;
+    heroStruct.attack = 1;
+
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         printf("error initializing SDL: %s\n", SDL_GetError());
     }
+    
     SDL_Window* win = SDL_CreateWindow("GAME", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
  
     // triggers the program that controls
@@ -169,43 +183,44 @@ int main(int argc, char *argv[]){
     heroeRect.x = (WINDOW_WIDTH - heroeRect.w) / 2;
     trapDialogRect.x = (WINDOW_WIDTH - trapDialogRect.w) / 2;
     treasureDialogRect.x = (WINDOW_WIDTH - treasureDialogRect.w) / 2;
-    closedTreasureRect.x = (WINDOW_WIDTH - closedTreasureRect.w) / 2;
-    closedTrapRect.x = (WINDOW_WIDTH - closedTrapRect.w) / 2;
-    openedTreasureRect.x = (WINDOW_WIDTH - openedTreasureRect.w) / 2;
+    closedTreasureRect.x = (WINDOW_WIDTH - closedTreasureRect.w) - 300;
+    closedTrapRect.x = (WINDOW_WIDTH - closedTrapRect.w) - 300;
+    openedTreasureRect.x = (WINDOW_WIDTH - openedTreasureRect.w) - 300;
     
     
     // sets initial y-position of object
     heroeRect.y = (WINDOW_HEIGHT - heroeRect.h) / 2;
     trapDialogRect.y = (WINDOW_HEIGHT - trapDialogRect.h) - 50;
     treasureDialogRect.y = (WINDOW_HEIGHT - treasureDialogRect.h) - 50;
-    closedTreasureRect.y = (WINDOW_HEIGHT - closedTreasureRect.h) / 2;
-    closedTrapRect.y = (WINDOW_HEIGHT - closedTrapRect.h) / 2;
-    openedTreasureRect.y = (WINDOW_HEIGHT - openedTreasureRect.h) / 2;
+    closedTreasureRect.y = (WINDOW_HEIGHT - closedTreasureRect.h) - 200;
+    closedTrapRect.y = (WINDOW_HEIGHT - closedTrapRect.h) - 200;
+    openedTreasureRect.y = (WINDOW_HEIGHT - openedTreasureRect.h) - 200;
    
  
     // controls animation loop
     int close = 0;
- 
-    // speed of box
-    int speed = 30;
 
     // animation loop
 
-    int index = indexCurrentRoom(rooms, matrixSize, rooms[0]->pos[0],rooms[0]->pos[1]);
+    int index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
 
         // printf("ROOM:\tx = %d y = %d\n", rooms[index]->pos[0],rooms[index]->pos[1]);
         // printf("N1:\tx = %d y = %d\n", rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
         // printf("N2:\tx = %d y = %d\n", rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
         // printf("N3:\tx = %d y = %d\n", rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
 
-    int n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-    int n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-    int n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-    int roomCofferType = rooms[index] -> cofferType;
-    bool isCofferOpened = rooms[index] -> isCofferOpened;
-    printf("COFFER TYPE: %d\n", roomCofferType);
+    n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+    n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+    n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+    roomCofferType = rooms[index] -> cofferType;
+    isCofferOpened = rooms[index] -> isCofferOpened;
 
-
+    printf("INDEX: %d\n", index);
+    printf("ROOM:\tx = %d y = %d\n", rooms[index]->pos[0],rooms[index]->pos[1]);
+    printf("N1:\tx = %d y = %d\n", rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+    printf("N2:\tx = %d y = %d\n", rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+    printf("N3:\tx = %d y = %d\n", rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+    printf("HEROE POS:\tx = %d y = %d\n", heroStruct.posX, heroStruct.posY);
     while (!close) {
         SDL_Event event;
  
@@ -222,16 +237,144 @@ int main(int argc, char *argv[]){
                 // keyboard API for key pressed
                 switch (event.key.keysym.scancode) {
                 case SDL_SCANCODE_W:
-                    heroeRect.y -= speed;
+                    if(n1 == 2){
+                        heroStruct.posX--;
+                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                        roomCofferType = rooms[index] -> cofferType;
+                        isCofferOpened = rooms[index] -> isCofferOpened;
+                    }
+                    if(n2 == 2){
+                        heroStruct.posX--;
+                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                        roomCofferType = rooms[index] -> cofferType;
+                        isCofferOpened = rooms[index] -> isCofferOpened;
+                    }
+                    if(n3 == 2){
+                        heroStruct.posX--;
+                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                        roomCofferType = rooms[index] -> cofferType;
+                        isCofferOpened = rooms[index] -> isCofferOpened;
+                    }
+                    printf("INDEX: %d\n", index);
+                    printf("ROOM:\tx = %d y = %d\n", rooms[index]->pos[0],rooms[index]->pos[1]);
+                    printf("N1:\tx = %d y = %d\n", rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                    printf("N2:\tx = %d y = %d\n", rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                    printf("N3:\tx = %d y = %d\n", rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                    printf("HEROE POS:\tx = %d y = %d\n", heroStruct.posX, heroStruct.posY);
                     break;
                 case SDL_SCANCODE_A:
-                    heroeRect.x -= speed;
+                    if(n1 == 0){
+                        heroStruct.posY--;
+                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                        roomCofferType = rooms[index] -> cofferType;
+                        isCofferOpened = rooms[index] -> isCofferOpened;
+                    }
+                    if(n2 == 0){
+                        heroStruct.posY--;
+                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                        roomCofferType = rooms[index] -> cofferType;
+                        isCofferOpened = rooms[index] -> isCofferOpened;
+                    }
+                    if(n3 == 0){
+                        heroStruct.posY--;
+                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                        roomCofferType = rooms[index] -> cofferType;
+                        isCofferOpened = rooms[index] -> isCofferOpened;
+                    }
+                    printf("INDEX: %d\n", index);
+                    printf("ROOM:\tx = %d y = %d\n", rooms[index]->pos[0],rooms[index]->pos[1]);
+                    printf("N1:\tx = %d y = %d\n", rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                    printf("N2:\tx = %d y = %d\n", rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                    printf("N3:\tx = %d y = %d\n", rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                    printf("HEROE POS:\tx = %d y = %d\n", heroStruct.posX, heroStruct.posY);
                     break;
                 case SDL_SCANCODE_S:
-                    heroeRect.y += speed;
+                    if(n1 == 3){
+                        heroStruct.posX++;
+                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                        roomCofferType = rooms[index] -> cofferType;
+                        isCofferOpened = rooms[index] -> isCofferOpened;
+                    }
+                    if(n2 == 3){
+                        heroStruct.posX++;
+                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                        roomCofferType = rooms[index] -> cofferType;
+                        isCofferOpened = rooms[index] -> isCofferOpened;
+                    }
+                    if(n3 == 3){
+                        heroStruct.posX++;
+                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                        roomCofferType = rooms[index] -> cofferType;
+                        isCofferOpened = rooms[index] -> isCofferOpened;
+                    }
+                    printf("INDEX: %d\n", index);
+                    printf("ROOM:\tx = %d y = %d\n", rooms[index]->pos[0],rooms[index]->pos[1]);
+                    printf("N1:\tx = %d y = %d\n", rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                    printf("N2:\tx = %d y = %d\n", rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                    printf("N3:\tx = %d y = %d\n", rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                    printf("HEROE POS:\tx = %d y = %d\n", heroStruct.posX, heroStruct.posY);
                     break;
                 case SDL_SCANCODE_D:
-                    heroeRect.x += speed;
+                    if(n1 == 1){
+                        heroStruct.posY++;
+                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                        roomCofferType = rooms[index] -> cofferType;
+                        isCofferOpened = rooms[index] -> isCofferOpened;
+                    }
+                    if(n2 == 1){
+                        heroStruct.posY++;
+                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                        roomCofferType = rooms[index] -> cofferType;
+                        isCofferOpened = rooms[index] -> isCofferOpened;
+                    }
+                    if(n3 == 1){
+                        heroStruct.posY++;
+                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                        roomCofferType = rooms[index] -> cofferType;
+                        isCofferOpened = rooms[index] -> isCofferOpened;
+                    }
+                    printf("INDEX: %d\n", index);
+                    printf("ROOM:\tx = %d y = %d\n", rooms[index]->pos[0],rooms[index]->pos[1]);
+                    printf("N1:\tx = %d y = %d\n", rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                    printf("N2:\tx = %d y = %d\n", rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                    printf("N3:\tx = %d y = %d\n", rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                    printf("HEROE POS:\tx = %d y = %d\n", heroStruct.posX, heroStruct.posY);
                     break;
                 case SDL_SCANCODE_E:
                     // int index = indexCurrentRoom(rooms, matrixSize, xPlayer, yPlayer);
