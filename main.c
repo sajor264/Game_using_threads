@@ -46,10 +46,16 @@ int main(int argc, char *argv[]){
     //     }
     // }
     // printf("TOTAL: %d\n", counter);
-    // for(int i = 0; i < matrixSize; i++){
-    // printf("POS:\tx = %d y = %d\n N1:\tx = %d y = %d\n N2:\tx = %d y = %d\n N3:\tx = %d y = %d\n COFFER TYPE:\t %d\n ROOM TYPE:\t%d\n\n", rooms[i] -> pos[0], rooms[i] -> pos[1], rooms[i] -> neighbour1[0], rooms[i] -> neighbour1[1], rooms[i] -> neighbour2[0], rooms[i] -> neighbour2[1], rooms[i] -> neighbour3[0], rooms[i] -> neighbour3[1], rooms[i] -> cofferType, rooms[i] -> type);
-    // }    
-    // return 0;
+    for(int i = 0; i < matrixSize; i++){
+    printf("POS:\tx = %d y = %d\n N1:\tx = %d y = %d\n N2:\tx = %d y = %d\n N3:\tx = %d y = %d\n COFFER TYPE:\t %d\n ROOM TYPE:\t%d\n\n", rooms[i] -> pos[0], rooms[i] -> pos[1], rooms[i] -> neighbour1[0], rooms[i] -> neighbour1[1], rooms[i] -> neighbour2[0], rooms[i] -> neighbour2[1], rooms[i] -> neighbour3[0], rooms[i] -> neighbour3[1], rooms[i] -> cofferType, rooms[i] -> type);
+    }    
+    return 0;
+
+    Hero heroStruct;
+    heroStruct.posX = rooms[0] -> pos[0];
+    heroStruct.posY = rooms[0] -> pos[1];
+    heroStruct.life = 5;
+    heroStruct.attack = 1;
 
     // returns zero on success else non-zero
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -67,6 +73,11 @@ int main(int argc, char *argv[]){
     // creates heroe texture
     SDL_Surface* surface = IMG_Load("Images/heroe.png");
     SDL_Texture* heroe = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_FreeSurface(surface);
+
+    // creates monster texture
+    surface = IMG_Load("Images/monster.png");
+    SDL_Texture* monster = SDL_CreateTextureFromSurface(rend, surface);
     SDL_FreeSurface(surface);
 
     // creates room texture
@@ -117,6 +128,7 @@ int main(int argc, char *argv[]){
     // let us control our image position
     // so that we can move it with our keyboard.
     SDL_Rect heroeRect;
+    SDL_Rect monsterRect;
     SDL_Rect trapDialogRect;
     SDL_Rect treasureDialogRect;
     SDL_Rect door1Rect;
@@ -128,6 +140,7 @@ int main(int argc, char *argv[]){
  
     // connects our texture with heroeRect to control position
     SDL_QueryTexture(heroe, NULL, NULL, &heroeRect.w, &heroeRect.h);
+    SDL_QueryTexture(monster, NULL, NULL, &monsterRect.w, &monsterRect.h);
     SDL_QueryTexture(trapDialog, NULL, NULL, &trapDialogRect.w, &trapDialogRect.h);
     SDL_QueryTexture(treasureDialog, NULL, NULL, &treasureDialogRect.w, &treasureDialogRect.h);
     SDL_QueryTexture(door1, NULL, NULL, &door1Rect.w, &door1Rect.h);
@@ -140,6 +153,9 @@ int main(int argc, char *argv[]){
     // adjust height and width of our image box.
     heroeRect.w /= 4;
     heroeRect.h /= 4;
+
+    monsterRect.w /= 3;
+    monsterRect.h /= 3;
 
     trapDialogRect.w /= 1;
     trapDialogRect.h /= 1;
@@ -167,6 +183,7 @@ int main(int argc, char *argv[]){
 
     // sets initial x-position of object
     heroeRect.x = (WINDOW_WIDTH - heroeRect.w) / 2;
+    monsterRect.x = ((WINDOW_WIDTH - monsterRect.w) / 2) + 150;
     trapDialogRect.x = (WINDOW_WIDTH - trapDialogRect.w) / 2;
     treasureDialogRect.x = (WINDOW_WIDTH - treasureDialogRect.w) / 2;
     closedTreasureRect.x = (WINDOW_WIDTH - closedTreasureRect.w) / 2;
@@ -176,6 +193,7 @@ int main(int argc, char *argv[]){
     
     // sets initial y-position of object
     heroeRect.y = (WINDOW_HEIGHT - heroeRect.h) / 2;
+    monsterRect.y = (WINDOW_HEIGHT - monsterRect.h) / 2;
     trapDialogRect.y = (WINDOW_HEIGHT - trapDialogRect.h) - 50;
     treasureDialogRect.y = (WINDOW_HEIGHT - treasureDialogRect.h) - 50;
     closedTreasureRect.y = (WINDOW_HEIGHT - closedTreasureRect.h) / 2;
@@ -191,7 +209,7 @@ int main(int argc, char *argv[]){
 
     // animation loop
 
-    int index = indexCurrentRoom(rooms, matrixSize, rooms[0]->pos[0],rooms[0]->pos[1]);
+    int index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX, heroStruct.posY);
 
         // printf("ROOM:\tx = %d y = %d\n", rooms[index]->pos[0],rooms[index]->pos[1]);
         // printf("N1:\tx = %d y = %d\n", rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
@@ -203,10 +221,14 @@ int main(int argc, char *argv[]){
     int n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
     int roomCofferType = rooms[index] -> cofferType;
     bool isCofferOpened = rooms[index] -> isCofferOpened;
-    printf("COFFER TYPE: %d\n", roomCofferType);
+    int monsterID = rooms[index] -> monsterId;
 
-
+    printf("LIFE:\t%d\nATTACK:\t%d\n\n", heroStruct.life, heroStruct.attack);
     while (!close) {
+        if(heroStruct.life == 0){
+            printf("GAME OVER\n");
+            close = 1;
+        }
         SDL_Event event;
  
         // Events management
@@ -233,46 +255,34 @@ int main(int argc, char *argv[]){
                 case SDL_SCANCODE_D:
                     heroeRect.x += speed;
                     break;
-                case SDL_SCANCODE_E:
-                    // int index = indexCurrentRoom(rooms, matrixSize, xPlayer, yPlayer);
-                    
-                    // if(rooms[index] -> cofferType == 0){
-                    //     SDL_RenderCopy(rend, treasureDialog, NULL, &treasureDialogRect);
-                    //     rooms[index] -> isCofferOpened = true;
-                    //     SDL_RenderPresent(rend);
-                    //     sleep(3);
-                    // }
+                case SDL_SCANCODE_E:                    
+                    if(rooms[index] -> cofferType == 0){
+                        SDL_RenderCopy(rend, treasureDialog, NULL, &treasureDialogRect);
+                        rooms[index] -> isCofferOpened = true;
+                        isCofferOpened = true;
+                        SDL_RenderPresent(rend);
+                        if((rand() % 2) == 0){
+                            heroStruct.attack++;
+                        } else {
+                            heroStruct.life++;
+                        }
+                        sleep(2);
+                    }
 
-                    // if(rooms[index] -> cofferType == 1){
-                    //     SDL_RenderCopy(rend, trapDialog, NULL, &trapDialogRect);
-                    //     rooms[index] -> isCofferOpened = true;
-                    //     SDL_RenderPresent(rend);
-                    //     sleep(3);
-                    // }
-
+                    if(rooms[index] -> cofferType == 1){
+                        SDL_RenderCopy(rend, trapDialog, NULL, &trapDialogRect);
+                        rooms[index] -> isCofferOpened = true;
+                        isCofferOpened = true;
+                        SDL_RenderPresent(rend);
+                        heroStruct.life--;
+                        sleep(2);
+                    }
                     break;
                 default:
                     break;
                 }
             }
         }
-
- 
-        // right boundary
-        if (heroeRect.x + heroeRect.w > WINDOW_WIDTH)
-            heroeRect.x = WINDOW_WIDTH - heroeRect.w;
- 
-        // left boundary
-        if (heroeRect.x < 0)
-            heroeRect.x = 0;
- 
-        // bottom boundary
-        if (heroeRect.y + heroeRect.h > WINDOW_HEIGHT)
-            heroeRect.y = WINDOW_HEIGHT - heroeRect.h;
- 
-        // upper boundary
-        if (heroeRect.y < 0)
-            heroeRect.y = 0;
  
         //clears the screen
         SDL_SetRenderDrawColor(rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
@@ -364,6 +374,7 @@ int main(int argc, char *argv[]){
             //printf("no es vecino \n"); 
         }
 
+        // Renderiza los tesoros / trampas
         if(roomCofferType == 0 && !isCofferOpened){
             SDL_RenderCopy(rend, closedTreasure, NULL, &closedTreasureRect);
         } else if(roomCofferType == 0 && isCofferOpened){
@@ -375,7 +386,12 @@ int main(int argc, char *argv[]){
             SDL_RenderCopy(rend, openedTreasure, NULL, &openedTreasureRect);
         }
 
-         SDL_RenderCopy(rend, heroe, NULL, &heroeRect);
+        // Renderiza los monstruos
+        if(monsterID >= 0){
+            SDL_RenderCopy(rend, monster, NULL, &monsterRect);
+        }
+
+        SDL_RenderCopy(rend, heroe, NULL, &heroeRect);
       
         
         // triggers the double buffers

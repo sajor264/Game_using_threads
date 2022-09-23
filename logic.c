@@ -10,6 +10,7 @@ typedef struct Rooms{
     int neighbour2[2];
     int neighbour3[2];
     bool isCofferOpened;
+    int monsterId;
 
     // 0 = tesoro, 1 = trampa, 2 = nada
     int cofferType;
@@ -190,6 +191,7 @@ void putRoom(Matrix *m, int i, int j, Rooms *rooms){
     rooms[(m -> size) - remainingRooms] -> pos[0] = i;
     rooms[(m -> size) - remainingRooms] -> pos[1] = j;
     rooms[(m -> size) - remainingRooms] -> isCofferOpened = false;
+    rooms[(m -> size) - remainingRooms] -> monsterId = 1;
     if(remainingRooms == 1){
         rooms[(m -> size) - remainingRooms] -> cofferType = 2;
         rooms[(m -> size) - remainingRooms] -> type = 2;
