@@ -57,7 +57,7 @@ int main(int argc, char *argv[]){
     SDL_FreeSurface(surface);
 
     // creates room texture
-    surface = IMG_Load("Images/room.jpg");
+    surface = IMG_Load("Images/room.png");
     SDL_Texture* roomTexture = SDL_CreateTextureFromSurface(rend, surface);
     SDL_FreeSurface(surface);
 
@@ -101,6 +101,26 @@ int main(int argc, char *argv[]){
     SDL_Texture* closedTrap = SDL_CreateTextureFromSurface(rend, surface);
     SDL_FreeSurface(surface);
  
+    // creates hero attack texture
+    surface = IMG_Load("Images/pow.png");
+    SDL_Texture* powAttack = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_FreeSurface(surface);
+
+    // creates hero damaged texture
+    surface = IMG_Load("Images/ouch.png");
+    SDL_Texture* ouchDamage = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_FreeSurface(surface);
+
+    // creates heart texture
+    surface = IMG_Load("Images/heart.png");
+    SDL_Texture* heart = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_FreeSurface(surface);
+
+    // creates sword texture
+    surface = IMG_Load("Images/sword.png");
+    SDL_Texture* sword = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_FreeSurface(surface);
+
     // Let us control our image position
     SDL_Rect heroeRect;
     SDL_Rect monsterRect;
@@ -112,7 +132,12 @@ int main(int argc, char *argv[]){
     SDL_Rect closedTreasureRect;
     SDL_Rect closedTrapRect;
     SDL_Rect openedTreasureRect;
- 
+    SDL_Rect powAttackRect;
+    SDL_Rect ouchDamageRect;
+    SDL_Rect lives[3];
+    SDL_Rect attacks[6];
+
+
     // connects our textures with Rects to control position
     SDL_QueryTexture(heroe, NULL, NULL, &heroeRect.w, &heroeRect.h);
     SDL_QueryTexture(monster, NULL, NULL, &monsterRect.w, &monsterRect.h);
@@ -124,7 +149,17 @@ int main(int argc, char *argv[]){
     SDL_QueryTexture(closedTreasure, NULL, NULL, &closedTreasureRect.w, &closedTreasureRect.h);
     SDL_QueryTexture(closedTrap, NULL, NULL, &closedTrapRect.w, &closedTrapRect.h);
     SDL_QueryTexture(openedTreasure, NULL, NULL, &openedTreasureRect.w, &openedTreasureRect.h);
- 
+    SDL_QueryTexture(powAttack, NULL, NULL, &powAttackRect.w, &powAttackRect.h);
+    SDL_QueryTexture(ouchDamage, NULL, NULL, &ouchDamageRect.w, &ouchDamageRect.h);
+
+    for(int i = 0; i <3; i++){
+        SDL_QueryTexture(heart, NULL, NULL, &lives[i].w, &lives[i].h);
+    }
+
+    for(int i = 0; i <6; i++){
+        SDL_QueryTexture(sword, NULL, NULL, &attacks[i].w, &attacks[i].h);
+    }
+
     // adjust height and width of our image box.
     heroeRect.w /= 4;
     heroeRect.h /= 4;
@@ -156,6 +191,23 @@ int main(int argc, char *argv[]){
     openedTreasureRect.w /= 4;
     openedTreasureRect.h /= 4;
 
+    powAttackRect.w /= 2;
+    powAttackRect.h /= 2;
+
+    ouchDamageRect.w *= 2;
+    ouchDamageRect.h *= 2;
+
+    for(int i = 0; i <3; i++){
+        lives[i].w /= 10;
+        lives[i].h /= 10;
+    }
+
+    for(int i = 0; i <6; i++){
+        attacks[i].w /= 3;
+        attacks[i].h /= 3;
+    }
+
+
     // sets initial x-position of object
     heroeRect.x = (WINDOW_WIDTH - heroeRect.w) / 2;
     monsterRect.x = ((WINDOW_WIDTH - monsterRect.w) / 2) + 150;
@@ -164,7 +216,14 @@ int main(int argc, char *argv[]){
     closedTreasureRect.x = (WINDOW_WIDTH - closedTreasureRect.w) - 300;
     closedTrapRect.x = (WINDOW_WIDTH - closedTrapRect.w) - 300;
     openedTreasureRect.x = (WINDOW_WIDTH - openedTreasureRect.w) - 300;
-    
+    powAttackRect.x = (WINDOW_WIDTH - powAttackRect.w) / 2;
+    ouchDamageRect.x = (WINDOW_WIDTH - ouchDamageRect.w) / 2;    
+    for(int i = 0; i < 3; i++){
+        lives[i].x = i*75;
+    }
+    for(int i = 0; i < 6; i++){
+        attacks[i].x = i*75;
+    }
     
     // sets initial y-position of object
     heroeRect.y = (WINDOW_HEIGHT - heroeRect.h) / 2;
@@ -174,8 +233,14 @@ int main(int argc, char *argv[]){
     closedTreasureRect.y = (WINDOW_HEIGHT - closedTreasureRect.h) - 200;
     closedTrapRect.y = (WINDOW_HEIGHT - closedTrapRect.h) - 200;
     openedTreasureRect.y = (WINDOW_HEIGHT - openedTreasureRect.h) - 200;
-   
- 
+    powAttackRect.y = (WINDOW_HEIGHT - powAttackRect.h) / 2;
+    ouchDamageRect.y = (WINDOW_HEIGHT - ouchDamageRect.h) / 2;   
+    for(int i = 0; i < 3; i++){
+        lives[i].y = 0;
+    }
+    for(int i = 0; i < 6; i++){
+        attacks[i].y = 70;
+    }
     // controls animation loop
     int close = 0;
 
@@ -191,8 +256,8 @@ int main(int argc, char *argv[]){
     Hero heroStruct;
     heroStruct.posX = rooms[0] -> pos[0];
     heroStruct.posY = rooms[0] -> pos[1];
-    heroStruct.life = 5;
-    heroStruct.attack = 1;
+    heroStruct.life = 3; //MAX 3
+    heroStruct.attack = 1; //MAX 6
 
     int index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX, heroStruct.posY);
     int n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
@@ -201,6 +266,8 @@ int main(int argc, char *argv[]){
     int roomCofferType = rooms[index] -> cofferType;
     bool isCofferOpened = rooms[index] -> isCofferOpened;
     int monsterID = rooms[index] -> monsterId;
+    int heroAttack = 0;
+    int heroDamage = 0;
 
     while (!close) {
         SDL_Event event;
@@ -221,10 +288,22 @@ int main(int argc, char *argv[]){
             case SDL_QUIT:
                 // handling of close button
                 close = 1;
+                return 0;
                 break;
  
             case SDL_KEYDOWN:
                 switch (event.key.keysym.scancode) {
+                
+                case SDL_SCANCODE_SPACE:
+                    if (monsterID >= 0 && heroStruct.attack>0){
+                        //monsterlist[monsterID].lives--;
+                        //monsterlist[monsterID]->lives?
+                        heroStruct.attack--;
+                        
+                        heroAttack = 7; //Cantidad de renders pow attack
+                    }
+                    break;
+
                 case SDL_SCANCODE_W:
                     if(n1 == 2 || n2 == 2 || n3 == 2){
                         heroStruct.posX--;
@@ -400,13 +479,36 @@ int main(int argc, char *argv[]){
         // Renderiza el heroe
         SDL_RenderCopy(rend, heroe, NULL, &heroeRect);
       
-        
+        //Renderiza el ataque del heroe
+        if (heroAttack>0){
+            SDL_RenderCopy(rend, powAttack, NULL, &powAttackRect);
+            heroAttack--;
+        }
+
+        //Renderiza el daño al heroe - Falta hacer trigger que setea heroDamage positivo
+        if (heroDamage>0){
+            SDL_RenderCopy(rend, ouchDamage, NULL, &ouchDamageRect);
+            heroDamage--;
+        }
+
+        //Rederiza las vidas
+        for(int j=0; j<heroStruct.life; j++){
+            SDL_RenderCopy(rend, heart, NULL, &lives[j]);
+        }
+
+        //Rederiza los puntos de ataque
+        for(int j=0; j<heroStruct.attack; j++){
+            SDL_RenderCopy(rend, sword, NULL, &attacks[j]);
+        }
+
         // triggers the double buffers
         // for multiple rendering
         SDL_RenderPresent(rend);
  
         // calculates to 60 fps
         SDL_Delay(1000 / 60);
+
+
     }
  
     // destroy textures
