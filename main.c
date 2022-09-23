@@ -71,20 +71,26 @@ int main(int argc, char *argv[]){
     SDL_Texture* treasureDialog = SDL_CreateTextureFromSurface(rend, surface);
     SDL_FreeSurface(surface);
 
-    // creates door1 texture
-    surface = IMG_Load("Images/door.png");
-    SDL_Texture* door1 = SDL_CreateTextureFromSurface(rend, surface);
+    // creates doorUp texture
+    surface = IMG_Load("Images/doorUp.png");
+    SDL_Texture* doorUp = SDL_CreateTextureFromSurface(rend, surface);
     SDL_FreeSurface(surface);
 
-    // creates door2 texture
-    surface = IMG_Load("Images/door.png");
-    SDL_Texture* door2 = SDL_CreateTextureFromSurface(rend, surface);
+    // creates doorDown texture
+    surface = IMG_Load("Images/doorDown.png");
+    SDL_Texture* doorDown = SDL_CreateTextureFromSurface(rend, surface);
     SDL_FreeSurface(surface);
 
-    // creates door3 texture
-    surface = IMG_Load("Images/door.png");
-    SDL_Texture* door3 = SDL_CreateTextureFromSurface(rend, surface);
+    // creates doorLeft texture
+    surface = IMG_Load("Images/doorLeft.png");
+    SDL_Texture* doorLeft = SDL_CreateTextureFromSurface(rend, surface);
     SDL_FreeSurface(surface);
+
+     // creates doorRight texture
+    surface = IMG_Load("Images/doorRight.png");
+    SDL_Texture* doorRight = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_FreeSurface(surface);
+
 
     // creates openedTreasure texture
     surface = IMG_Load("Images/openedTreasure.png");
@@ -126,9 +132,10 @@ int main(int argc, char *argv[]){
     SDL_Rect monsterRect;
     SDL_Rect trapDialogRect;
     SDL_Rect treasureDialogRect;
-    SDL_Rect door1Rect;
-    SDL_Rect door2Rect;
-    SDL_Rect door3Rect;
+    SDL_Rect doorUpRect;
+    SDL_Rect doorDownRect;
+    SDL_Rect doorLeftRect;
+    SDL_Rect doorRightRect;
     SDL_Rect closedTreasureRect;
     SDL_Rect closedTrapRect;
     SDL_Rect openedTreasureRect;
@@ -143,9 +150,10 @@ int main(int argc, char *argv[]){
     SDL_QueryTexture(monster, NULL, NULL, &monsterRect.w, &monsterRect.h);
     SDL_QueryTexture(trapDialog, NULL, NULL, &trapDialogRect.w, &trapDialogRect.h);
     SDL_QueryTexture(treasureDialog, NULL, NULL, &treasureDialogRect.w, &treasureDialogRect.h);
-    SDL_QueryTexture(door1, NULL, NULL, &door1Rect.w, &door1Rect.h);
-    SDL_QueryTexture(door2, NULL, NULL, &door2Rect.w, &door2Rect.h);
-    SDL_QueryTexture(door3, NULL, NULL, &door3Rect.w, &door3Rect.h);
+    SDL_QueryTexture(doorUp, NULL, NULL, &doorUpRect.w, &doorUpRect.h);
+    SDL_QueryTexture(doorDown, NULL, NULL, &doorDownRect.w, &doorDownRect.h);
+    SDL_QueryTexture(doorRight, NULL, NULL, &doorRightRect.w, &doorRightRect.h);
+    SDL_QueryTexture(doorLeft, NULL, NULL, &doorLeftRect.w, &doorLeftRect.h);
     SDL_QueryTexture(closedTreasure, NULL, NULL, &closedTreasureRect.w, &closedTreasureRect.h);
     SDL_QueryTexture(closedTrap, NULL, NULL, &closedTrapRect.w, &closedTrapRect.h);
     SDL_QueryTexture(openedTreasure, NULL, NULL, &openedTreasureRect.w, &openedTreasureRect.h);
@@ -173,14 +181,17 @@ int main(int argc, char *argv[]){
     treasureDialogRect.w /= 1;
     treasureDialogRect.h /= 1;
 
-    door1Rect.w /= 5;
-    door1Rect.h /= 5;
+    doorUpRect.w /= 1;
+    doorUpRect.h /= 1;
 
-    door2Rect.w /= 5;
-    door2Rect.h /= 5;
+    doorDownRect.w /= 1;
+    doorDownRect.h /= 1;
 
-    door3Rect.w /= 5;
-    door3Rect.h /= 5;
+    doorLeftRect.w /= 1;
+    doorLeftRect.h /= 1;
+
+    doorRightRect.w /= 1;
+    doorRightRect.h /= 1;
 
     closedTreasureRect.w /= 12;
     closedTreasureRect.h /= 12;
@@ -391,71 +402,78 @@ int main(int argc, char *argv[]){
         // Renderiza las puertas
         if(n1 == 0){
             // Izquierda
-             door1Rect.x = 80;
-             door1Rect.y =(WINDOW_HEIGHT -  door1Rect.h) / 2;
-             SDL_RenderCopy(rend, door1, NULL, &door1Rect);
+             doorLeftRect.x = -15;
+             doorLeftRect.y =(WINDOW_HEIGHT -  doorLeftRect.h) / 2;
+             SDL_RenderCopy(rend, doorLeft, NULL, &doorLeftRect);
            
         }else if(n1 == 1){
             // Derecha
-             door1Rect.x = (WINDOW_WIDTH -  door1Rect.w) - 80;
-             door1Rect.y =(WINDOW_HEIGHT -  door1Rect.h) / 2;
-             SDL_RenderCopy(rend, door1, NULL, &door1Rect);
+             doorRightRect.x = (WINDOW_WIDTH -  doorRightRect.w) +15;
+             doorRightRect.y =(WINDOW_HEIGHT -   doorRightRect.h) / 2;
+             SDL_RenderCopy(rend, doorRight, NULL, & doorRightRect);
             
         }else if(n1 == 2){
             // Arriba
-             door1Rect.x = (WINDOW_WIDTH -  door1Rect.w) / 2;
-             door1Rect.y =0;
-             SDL_RenderCopy(rend, door1, NULL, &door1Rect);
+             doorUpRect.x = (WINDOW_WIDTH -  doorUpRect.w) / 2;
+             doorUpRect.y =-30;
+             SDL_RenderCopy(rend, doorUp, NULL, &doorUpRect);
             
         }else if(n1 == 3){
             // Abajo
-             door1Rect.x = (WINDOW_WIDTH -  door1Rect.w) / 2;
-             door1Rect.y =(WINDOW_HEIGHT -  door1Rect.h);
-             SDL_RenderCopy(rend, door1, NULL, &door1Rect);
+             doorDownRect.x = (WINDOW_WIDTH -   doorDownRect.w) / 2;
+              doorDownRect.y =(WINDOW_HEIGHT -    doorDownRect.h)+35;
+             SDL_RenderCopy(rend, doorDown, NULL, &  doorDownRect);
         
         }
-
         if(n2 == 0){
-             door2Rect.x = 80;
-             door2Rect.y =(WINDOW_HEIGHT -  door2Rect.h) / 2;
-             SDL_RenderCopy(rend, door2, NULL, &door2Rect);
-            
+            // Izquierda
+             doorLeftRect.x = -15;
+             doorLeftRect.y =(WINDOW_HEIGHT -  doorLeftRect.h) / 2;
+             SDL_RenderCopy(rend, doorLeft, NULL, &doorLeftRect);
+           
         }else if(n2 == 1){
-             door2Rect.x = (WINDOW_WIDTH -  door2Rect.w) - 80;
-             door2Rect.y =(WINDOW_HEIGHT -  door2Rect.h) / 2;
-            SDL_RenderCopy(rend, door2, NULL, &door2Rect);
-
+            // Derecha
+             doorRightRect.x = (WINDOW_WIDTH -  doorRightRect.w) +15;
+             doorRightRect.y =(WINDOW_HEIGHT -   doorRightRect.h) / 2;
+             SDL_RenderCopy(rend, doorRight, NULL, & doorRightRect);
+            
         }else if(n2 == 2){
-             door2Rect.x = (WINDOW_WIDTH -  door2Rect.w) / 2;
-             door2Rect.y =0;
-            SDL_RenderCopy(rend, door2, NULL, &door2Rect);
+            // Arriba
+             doorUpRect.x = (WINDOW_WIDTH -  doorUpRect.w) / 2;
+             doorUpRect.y =-30;
+             SDL_RenderCopy(rend, doorUp, NULL, &doorUpRect);
             
         }else if(n2 == 3){
-             door2Rect.x = (WINDOW_WIDTH -  door2Rect.w) / 2;
-             door2Rect.y =(WINDOW_HEIGHT -  door2Rect.h);
-            SDL_RenderCopy(rend, door2, NULL, &door2Rect);
+            // Abajo
+             doorDownRect.x = (WINDOW_WIDTH -   doorDownRect.w) / 2;
+              doorDownRect.y =(WINDOW_HEIGHT -    doorDownRect.h)+35;
+             SDL_RenderCopy(rend, doorDown, NULL, &  doorDownRect);
         
         }
 
-        if(n3 == 0){
-             door3Rect.x = 80;
-             door3Rect.y =(WINDOW_HEIGHT -  door3Rect.h) / 2;
-             SDL_RenderCopy(rend, door3, NULL, &door3Rect);
+         if(n3 == 0){
+            // Izquierda
+             doorLeftRect.x = -15;
+             doorLeftRect.y =(WINDOW_HEIGHT -  doorLeftRect.h) / 2;
+             SDL_RenderCopy(rend, doorLeft, NULL, &doorLeftRect);
            
         }else if(n3 == 1){
-             door3Rect.x = (WINDOW_WIDTH -  door3Rect.w) - 80;
-             door3Rect.y =(WINDOW_HEIGHT -  door3Rect.h) / 2;
-            SDL_RenderCopy(rend, door3, NULL, &door3Rect);
-
+            // Derecha
+             doorRightRect.x = (WINDOW_WIDTH -  doorRightRect.w)+15;
+             doorRightRect.y =(WINDOW_HEIGHT -   doorRightRect.h) / 2;
+             SDL_RenderCopy(rend, doorRight, NULL, & doorRightRect);
+            
         }else if(n3 == 2){
-             door3Rect.x = (WINDOW_WIDTH -  door3Rect.w) / 2;
-             door3Rect.y =0;
-            SDL_RenderCopy(rend, door3, NULL, &door3Rect);
+            // Arriba
+             doorUpRect.x = (WINDOW_WIDTH -  doorUpRect.w) / 2;
+             doorUpRect.y = -30;
+             SDL_RenderCopy(rend, doorUp, NULL, &doorUpRect);
             
         }else if(n3 == 3){
-            door3Rect.x = (WINDOW_WIDTH -  door3Rect.w) / 2;
-            door3Rect.y =(WINDOW_HEIGHT -  door3Rect.h);
-            SDL_RenderCopy(rend, door3, NULL, &door3Rect);
+            // Abajo
+             doorDownRect.x = (WINDOW_WIDTH -   doorDownRect.w) / 2;
+              doorDownRect.y =(WINDOW_HEIGHT -    doorDownRect.h)+35;
+             SDL_RenderCopy(rend, doorDown, NULL, &  doorDownRect);
         
         }
 
@@ -517,9 +535,10 @@ int main(int argc, char *argv[]){
     SDL_DestroyTexture(trapDialog);
     SDL_DestroyTexture(treasureDialog);
     SDL_DestroyTexture(monster);
-    SDL_DestroyTexture(door1);
-    SDL_DestroyTexture(door2);
-    SDL_DestroyTexture(door3);
+    SDL_DestroyTexture(doorUp);
+    SDL_DestroyTexture(doorDown);
+    SDL_DestroyTexture(doorLeft);
+    SDL_DestroyTexture(doorRight);
     SDL_DestroyTexture(openedTreasure);
     SDL_DestroyTexture(closedTreasure);
     SDL_DestroyTexture(closedTrap);
