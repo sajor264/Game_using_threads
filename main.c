@@ -542,6 +542,10 @@ int main(int argc, char *argv[]){
     SDL_DestroyTexture(openedTreasure);
     SDL_DestroyTexture(closedTreasure);
     SDL_DestroyTexture(closedTrap);
+    SDL_DestroyTexture(powAttack);
+    SDL_DestroyTexture(ouchDamage);
+    SDL_DestroyTexture(heart);
+    SDL_DestroyTexture(sword);
 
     // destroy renderer
     SDL_DestroyRenderer(rend);
