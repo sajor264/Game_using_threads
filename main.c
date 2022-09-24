@@ -5,6 +5,8 @@
 
 #define WINDOW_HEIGHT 1000
 #define WINDOW_WIDTH 1800
+#define MAX_LIFE 20
+#define MAX_ATTACK 20
 
 int main(int argc, char *argv[]){
     srand (time(NULL));
@@ -141,8 +143,8 @@ int main(int argc, char *argv[]){
     SDL_Rect openedTreasureRect;
     SDL_Rect powAttackRect;
     SDL_Rect ouchDamageRect;
-    SDL_Rect lives[3];
-    SDL_Rect attacks[6];
+    SDL_Rect lives[MAX_LIFE];
+    SDL_Rect attacks[MAX_ATTACK];
 
 
     // connects our textures with Rects to control position
@@ -160,11 +162,11 @@ int main(int argc, char *argv[]){
     SDL_QueryTexture(powAttack, NULL, NULL, &powAttackRect.w, &powAttackRect.h);
     SDL_QueryTexture(ouchDamage, NULL, NULL, &ouchDamageRect.w, &ouchDamageRect.h);
 
-    for(int i = 0; i <3; i++){
+    for(int i = 0; i <MAX_LIFE; i++){
         SDL_QueryTexture(heart, NULL, NULL, &lives[i].w, &lives[i].h);
     }
 
-    for(int i = 0; i <6; i++){
+    for(int i = 0; i <MAX_ATTACK; i++){
         SDL_QueryTexture(sword, NULL, NULL, &attacks[i].w, &attacks[i].h);
     }
 
@@ -208,12 +210,12 @@ int main(int argc, char *argv[]){
     ouchDamageRect.w *= 2;
     ouchDamageRect.h *= 2;
 
-    for(int i = 0; i <3; i++){
+    for(int i = 0; i <MAX_LIFE; i++){
         lives[i].w /= 10;
         lives[i].h /= 10;
     }
 
-    for(int i = 0; i <6; i++){
+    for(int i = 0; i <MAX_ATTACK; i++){
         attacks[i].w /= 3;
         attacks[i].h /= 3;
     }
@@ -229,10 +231,10 @@ int main(int argc, char *argv[]){
     openedTreasureRect.x = (WINDOW_WIDTH - openedTreasureRect.w) - 300;
     powAttackRect.x = (WINDOW_WIDTH - powAttackRect.w) / 2;
     ouchDamageRect.x = (WINDOW_WIDTH - ouchDamageRect.w) / 2;    
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < MAX_LIFE; i++){
         lives[i].x = i*75;
     }
-    for(int i = 0; i < 6; i++){
+    for(int i = 0; i < MAX_ATTACK; i++){
         attacks[i].x = i*75;
     }
     
@@ -246,10 +248,10 @@ int main(int argc, char *argv[]){
     openedTreasureRect.y = (WINDOW_HEIGHT - openedTreasureRect.h) - 200;
     powAttackRect.y = (WINDOW_HEIGHT - powAttackRect.h) / 2;
     ouchDamageRect.y = (WINDOW_HEIGHT - ouchDamageRect.h) / 2;   
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < MAX_LIFE; i++){
         lives[i].y = 0;
     }
-    for(int i = 0; i < 6; i++){
+    for(int i = 0; i < MAX_ATTACK; i++){
         attacks[i].y = 70;
     }
     // controls animation loop
@@ -318,11 +320,9 @@ int main(int argc, char *argv[]){
                 
                 case SDL_SCANCODE_SPACE:
                     if (idMonster >= 0 && heroStruct.attack>0){
-                        //monsterlist[idMonster].lives--;
-                        //monsterlist[idMonster]->lives?
+                        monsterList[idMonster]->live--;
                         heroStruct.attack--;
-                        
-                        heroAttack = 7; //Cantidad de renders pow attack
+                        heroAttack = 5; //Cantidad de renders pow attack
                     }
                     break;
 
@@ -568,7 +568,6 @@ int main(int argc, char *argv[]){
 
 
     }
- 
     // destroy textures
     SDL_DestroyTexture(heroe);
     SDL_DestroyTexture(roomTexture);
