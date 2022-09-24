@@ -285,7 +285,6 @@ bool createMapAux(Matrix* m, int i, int j, Rooms *rooms){
 }
 
 void createMap(Matrix* m, Rooms *rooms){    
-    bool isCreated = false;
     int i = rand() % m -> size;
     int j = rand() % m -> size;
     m -> data[i*(m->size) + j] = 1;
@@ -297,10 +296,11 @@ void createMap(Matrix* m, Rooms *rooms){
     rooms[0] -> isCofferOpened = false;
     rooms[0] -> idMonster = -1;
 
-    while(!isCreated){
-        isCreated = createMapAux(m, i, j, rooms);
+    if(createMapAux(m, i, j, rooms)){
+        setNeighbours(m, rooms);   
+    } else{
+        createMap(m, rooms);
     }
-    setNeighbours(m, rooms);
 }
 
 int indexCurrentRoom(Rooms *rooms, int size, int xPlayer, int yPlayer){
@@ -404,10 +404,6 @@ bool auxItsRoomFree(Monster* monster, Rooms *rooms, int id, int mSize, int x , i
 
 
 bool itsRoomFree(Monster* monster, Rooms *rooms, int id, int posRoom, int mSize){
-    //printf("%d\t", id,"\n");
-    //printf("%d\t", posRoom);
-    //printf("%d\t", mSize);
-    //printf("\n");
     for(int i = 0; i < mSize ; i++){
 
         if (rooms[i]->pos[0] == monster[id]->x && rooms[i]->pos[1] == monster[id]->y)
@@ -474,7 +470,6 @@ void deleteMonster(Monster* monster, Rooms *rooms, int id, int mSize, int x , in
 
 void* monsterAdmin(void * ad){
     struct MonsterAd* datos = (struct MonsterAd*) ad;
-    printf("%d\n", datos->pos);
 
     while (true)
     {   
@@ -496,7 +491,7 @@ void* monsterAdmin(void * ad){
                 printf("%d\n", datos->Monster[datos->pos]->id);
                 printf("%d\n", datos->Monster[datos->pos]->x);
                 printf("%d\n", datos->Monster[datos->pos]->y);
-                printf("Entro a la primera avitacion\n");
+                printf("Entro a la primera habitacion\n");
                 printf("\n");
             }else{
                 if (itsRoomFree(datos->Monster,datos->Roons,datos->pos,2,datos->mSize))
@@ -505,7 +500,7 @@ void* monsterAdmin(void * ad){
                     printf("%d\n", datos->Monster[datos->pos]->id);
                     printf("%d\n", datos->Monster[datos->pos]->x);
                     printf("%d\n", datos->Monster[datos->pos]->y);
-                    printf("Entro a la segunda avitacion\n");
+                    printf("Entro a la segunda habitacion\n");
                     printf("\n");
                 }else{
                     if (itsRoomFree(datos->Monster,datos->Roons,datos->pos,3,datos->mSize))
@@ -514,7 +509,7 @@ void* monsterAdmin(void * ad){
                     printf("%d\n", datos->Monster[datos->pos]->id);
                     printf("%d\n", datos->Monster[datos->pos]->x);
                     printf("%d\n", datos->Monster[datos->pos]->y);
-                    printf("Entro a la tercera avitacion\n");
+                    printf("Entro a la tercera habitacion\n");
                     printf("\n");
                     }
                 }
