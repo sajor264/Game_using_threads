@@ -328,50 +328,78 @@ int main(int argc, char *argv[]){
 
                 case SDL_SCANCODE_W:
                     if(n1 == 2 || n2 == 2 || n3 == 2){
-                        heroStruct.posX--;
-                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
-                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                        roomCofferType = rooms[index] -> cofferType;
-                        isCofferOpened = rooms[index] -> isCofferOpened;
-                        idMonster = rooms[index] -> idMonster;
+                        int x = heroStruct.posX; 
+                        x--;
+                        if (rooms[indexCurrentRoom(rooms, matrixSize, x , heroStruct.posY)] -> idMonster <= 0 ){
+                              heroStruct.posX--;
+                            index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                            n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                            n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                            n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                            roomCofferType = rooms[index] -> cofferType;
+                            isCofferOpened = rooms[index] -> isCofferOpened;
+                            idMonster = rooms[index] -> idMonster;
+
+                        }else{
+                           // printf("Habitacion abajo bloqueada");
+                        }
+
+                      
                     }
                     break;
                 case SDL_SCANCODE_A:
-                    if(n1 == 0 || n2 == 0 || n3 == 0){
-                        heroStruct.posY--;
-                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
-                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                        roomCofferType = rooms[index] -> cofferType;
-                        isCofferOpened = rooms[index] -> isCofferOpened;
-                        idMonster = rooms[index] -> idMonster;
+                    if(n1 == 0 || n2 == 0 || n3 == 0 ){
+                        int y = heroStruct.posY; 
+                        y--;
+                        if (rooms[indexCurrentRoom(rooms, matrixSize, heroStruct.posX , y)] -> idMonster <= 0 ){
+                            heroStruct.posY--;
+                            index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                            n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                            n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                            n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                            roomCofferType = rooms[index] -> cofferType;
+                            isCofferOpened = rooms[index] -> isCofferOpened;
+                            idMonster = rooms[index] -> idMonster;
+                        }
+                        else{
+                            // printf("Habitacion izquierda bloqueada");
+                        }
                     }
                     break;
                 case SDL_SCANCODE_S:
                     if(n1 == 3 || n2 == 3 || n3 == 3){
-                        heroStruct.posX++;
-                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
-                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                        roomCofferType = rooms[index] -> cofferType;
-                        isCofferOpened = rooms[index] -> isCofferOpened;
-                        idMonster = rooms[index] -> idMonster;
+                        int x = heroStruct.posX; 
+                        x++;
+                        if (rooms[indexCurrentRoom(rooms, matrixSize, x , heroStruct.posY)] -> idMonster <= 0 ){
+                            heroStruct.posX++;
+                            index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                            n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                            n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                            n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                            roomCofferType = rooms[index] -> cofferType;
+                            isCofferOpened = rooms[index] -> isCofferOpened;
+                            idMonster = rooms[index] -> idMonster;
+                        }else{
+                             // printf("Habitacion abajo bloqueada");
+                        }
                     }
                     break;
                 case SDL_SCANCODE_D:
                     if(n1 == 1 || n2 == 1 || n3 == 1){
-                        heroStruct.posY++;
-                        index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
-                        n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
-                        n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
-                        n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
-                        roomCofferType = rooms[index] -> cofferType;
-                        isCofferOpened = rooms[index] -> isCofferOpened;
-                        idMonster = rooms[index] -> idMonster;
+                        int y = heroStruct.posY; 
+                        y++;
+                        if (rooms[indexCurrentRoom(rooms, matrixSize, heroStruct.posX , y)] -> idMonster <= 0 ){
+                            heroStruct.posY++;
+                            index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX,heroStruct.posY);
+                            n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
+                            n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
+                            n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
+                            roomCofferType = rooms[index] -> cofferType;
+                            isCofferOpened = rooms[index] -> isCofferOpened;
+                            idMonster = rooms[index] -> idMonster;
+                        }else{
+                             //printf("Habitacion derecha bloqueada");
+                        }
                     }
                     break;
                 case SDL_SCANCODE_E:                    

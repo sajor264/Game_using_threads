@@ -487,30 +487,30 @@ void* monsterAdmin(void * ad){
         {
             if (itsRoomFree(datos->Monster,datos->Roons,datos->pos,1,datos->mSize))
             {   
-                printf("Monster\t");
+                /*printf("Monster\t");
                 printf("%d\n", datos->Monster[datos->pos]->id);
                 printf("%d\n", datos->Monster[datos->pos]->x);
                 printf("%d\n", datos->Monster[datos->pos]->y);
                 printf("Entro a la primera habitacion\n");
-                printf("\n");
+                printf("\n");*/
             }else{
                 if (itsRoomFree(datos->Monster,datos->Roons,datos->pos,2,datos->mSize))
                 {   
-                    printf("Monster\t");
+                   /* printf("Monster\t");
                     printf("%d\n", datos->Monster[datos->pos]->id);
                     printf("%d\n", datos->Monster[datos->pos]->x);
                     printf("%d\n", datos->Monster[datos->pos]->y);
                     printf("Entro a la segunda habitacion\n");
-                    printf("\n");
+                    printf("\n");*/
                 }else{
                     if (itsRoomFree(datos->Monster,datos->Roons,datos->pos,3,datos->mSize))
                     {
-                    printf("Monster\t");
+                   /* printf("Monster\t");
                     printf("%d\n", datos->Monster[datos->pos]->id);
                     printf("%d\n", datos->Monster[datos->pos]->x);
                     printf("%d\n", datos->Monster[datos->pos]->y);
                     printf("Entro a la tercera habitacion\n");
-                    printf("\n");
+                    printf("\n");*/
                     }
                 }
             }
