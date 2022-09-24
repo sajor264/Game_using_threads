@@ -479,9 +479,9 @@ void* monsterAdmin(void * ad){
 
     while (true)
     {   
-        if (datos->Monster[datos->pos]->live == 0)
+        if (datos->Monster[datos->pos]->live <= 0)
         {   
-
+            deleteMonster(datos->Monster, datos->Roons,datos->pos,datos->mSize,datos->Monster[datos->pos]->x,datos->Monster[datos->pos]->y);
             break;
         }
         
@@ -527,7 +527,6 @@ void* monsterAdmin(void * ad){
         sleep(1);
         /* code */
     }
-    deleteMonster(datos->Monster, datos->Roons,datos->pos,datos->mSize,datos->Monster[datos->pos]->x,datos->Monster[datos->pos]->y);
     pthread_exit(0);
     return 0;
 }
