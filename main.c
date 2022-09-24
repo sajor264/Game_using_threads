@@ -292,6 +292,8 @@ int main(int argc, char *argv[]){
     int idMonster = rooms[index] -> idMonster;
     int heroAttack = 0;
     int heroDamage = 0;
+    int trapMessage = 0;
+    int treasureMessage = 0;
 
     while (!close) {
         SDL_Event event;
@@ -402,25 +404,21 @@ int main(int argc, char *argv[]){
                     break;
                 case SDL_SCANCODE_E:                    
                     if(rooms[index] -> cofferType == 0){
-                        SDL_RenderCopy(rend, treasureDialog, NULL, &treasureDialogRect);
+                        treasureMessage = 10;
                         rooms[index] -> isCofferOpened = true;
                         isCofferOpened = true;
-                        SDL_RenderPresent(rend);
                         if((rand() % 2) == 0){
                             heroStruct.attack++;
                         } else {
                             heroStruct.life++;
                         }
-                        sleep(2);
                     }
 
                     if(rooms[index] -> cofferType == 1){
-                        SDL_RenderCopy(rend, trapDialog, NULL, &trapDialogRect);
+                        trapMessage = 10;
                         rooms[index] -> isCofferOpened = true;
                         isCofferOpened = true;
-                        SDL_RenderPresent(rend);
                         heroStruct.life--;
-                        sleep(2);
                     }
                     break;
                 default:
@@ -526,6 +524,18 @@ int main(int argc, char *argv[]){
         } else if(roomCofferType == 1 && isCofferOpened){
             SDL_RenderCopy(rend, openedTreasure, NULL, &openedTreasureRect);
         }
+
+        //Renderiza los mensajes de cofres
+        if (treasureMessage>0){
+            SDL_RenderCopy(rend, treasureDialog, NULL, &treasureDialogRect);
+            treasureMessage--;
+        }
+        if (trapMessage>0){
+            SDL_RenderCopy(rend, trapDialog, NULL, &trapDialogRect);
+            treasureMessage--;
+        }
+                                
+
 
         // Renderiza los monstruos
         if(idMonster >= 0){
