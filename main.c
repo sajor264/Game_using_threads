@@ -403,7 +403,8 @@ int main(int argc, char *argv[]){
                 }
             }
         }
- 
+
+        idMonster = rooms[index] -> idMonster;
         //clears the screen
         SDL_SetRenderDrawColor(rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
         SDL_RenderClear(rend);
