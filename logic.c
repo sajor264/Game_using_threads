@@ -299,6 +299,12 @@ void createMap(Matrix* m, Rooms *rooms){
     if(createMapAux(m, i, j, rooms)){
         setNeighbours(m, rooms);   
     } else{
+        m -> data[i*(m->size) + j] = 0;
+        rooms[0] -> pos[0] = -1;
+        rooms[0] -> pos[1] = -1;
+        rooms[0] -> cofferType = -1;
+        rooms[0] -> type = -1;
+        rooms[0] -> idMonster = -1;
         createMap(m, rooms);
     }
 }
@@ -414,9 +420,9 @@ bool itsRoomFree(Monster* monster, Rooms *rooms, int id, int posRoom, int mSize)
                     {
                         monster[id]->x = rooms[i]->neighbour1[0];
                         monster[id]->y = rooms[i]->neighbour1[1];
-                        //pthread_mutex_lock(&lock);
+                        pthread_mutex_lock(&lock);
                         rooms[i]->idMonster = -1;
-                        //pthread_mutex_unlock(&lock);
+                        pthread_mutex_unlock(&lock);
                         return true;
                     }
             
@@ -427,9 +433,9 @@ bool itsRoomFree(Monster* monster, Rooms *rooms, int id, int posRoom, int mSize)
                         {
                             monster[id]->x = rooms[i]->neighbour2[0];
                             monster[id]->y = rooms[i]->neighbour2[1];
-                            //pthread_mutex_lock(&lock);
+                            pthread_mutex_lock(&lock);
                             rooms[i]->idMonster = -1;
-                            //pthread_mutex_unlock(&lock);
+                            pthread_mutex_unlock(&lock);
                             return true;
                         }
                     }else{
@@ -439,9 +445,9 @@ bool itsRoomFree(Monster* monster, Rooms *rooms, int id, int posRoom, int mSize)
                             {
                             monster[id]->x = rooms[i]->neighbour3[0];
                             monster[id]->y = rooms[i]->neighbour3[1];
-                            //pthread_mutex_lock(&lock);
+                            pthread_mutex_lock(&lock);
                             rooms[i]->idMonster = -1;
-                            //pthread_mutex_unlock(&lock);
+                            pthread_mutex_unlock(&lock);
                             return true;
                             }
                         }

@@ -204,8 +204,8 @@ int main(int argc, char *argv[]){
     openedTreasureRect.w /= 4;
     openedTreasureRect.h /= 4;
 
-    powAttackRect.w /= 2;
-    powAttackRect.h /= 2;
+    powAttackRect.w /= 6;
+    powAttackRect.h /= 6;
 
     ouchDamageRect.w *= 2;
     ouchDamageRect.h *= 2;
@@ -272,7 +272,7 @@ int main(int argc, char *argv[]){
     heroStruct.posX = rooms[0] -> pos[0];
     heroStruct.posY = rooms[0] -> pos[1];
     heroStruct.life = 3; //MAX 3
-    heroStruct.attack = 1; //MAX 6
+    heroStruct.attack = 9; //MAX 6
 
     Hero* apuntHero = &heroStruct;
 
@@ -312,17 +312,15 @@ int main(int argc, char *argv[]){
             case SDL_QUIT:
                 // handling of close button
                 close = 1;
-                return 0;
-                break;
  
             case SDL_KEYDOWN:
                 switch (event.key.keysym.scancode) {
                 
                 case SDL_SCANCODE_SPACE:
-                    if (idMonster >= 0 && heroStruct.attack>0){
-                        monsterList[idMonster]->live--;
-                        heroStruct.attack--;
-                        heroAttack = 5; //Cantidad de renders pow attack
+                    if ((rooms[indexCurrentRoom(rooms, matrixSize, heroStruct.posX , heroStruct.posY)] -> idMonster >= 0) && heroStruct.attack>0 ){
+                        monsterList[idMonster]->live --;
+                        heroStruct.attack --;
+                        heroAttack = 1; //Cantidad de renders pow attack
                     }
                     break;
 
@@ -338,7 +336,7 @@ int main(int argc, char *argv[]){
                             n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
                             roomCofferType = rooms[index] -> cofferType;
                             isCofferOpened = rooms[index] -> isCofferOpened;
-                            idMonster = rooms[index] -> idMonster;
+
 
                         }else{
                            // printf("Habitacion abajo bloqueada");
@@ -359,7 +357,7 @@ int main(int argc, char *argv[]){
                             n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
                             roomCofferType = rooms[index] -> cofferType;
                             isCofferOpened = rooms[index] -> isCofferOpened;
-                            idMonster = rooms[index] -> idMonster;
+                
                         }
                         else{
                             // printf("Habitacion izquierda bloqueada");
@@ -378,7 +376,7 @@ int main(int argc, char *argv[]){
                             n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
                             roomCofferType = rooms[index] -> cofferType;
                             isCofferOpened = rooms[index] -> isCofferOpened;
-                            idMonster = rooms[index] -> idMonster;
+                    
                         }else{
                              // printf("Habitacion abajo bloqueada");
                         }
@@ -396,7 +394,7 @@ int main(int argc, char *argv[]){
                             n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
                             roomCofferType = rooms[index] -> cofferType;
                             isCofferOpened = rooms[index] -> isCofferOpened;
-                            idMonster = rooms[index] -> idMonster;
+                        
                         }else{
                              //printf("Habitacion derecha bloqueada");
                         }
