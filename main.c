@@ -258,11 +258,14 @@ int main(int argc, char *argv[]){
     // Create Map and Rooms
     Rooms *rooms = malloc(sizeof(struct Rooms));
     createMap(matrix, rooms);
+
+
     
-    //printMatrix(matrix);
+    printMatrix(matrix);
     // for(int i = 0; i < matrixSize; i++){
     // printf("POS:\tx = %d y = %d\n N1:\tx = %d y = %d\n N2:\tx = %d y = %d\n N3:\tx = %d y = %d\n COFFER TYPE:\t %d\n ROOM TYPE:\t%d\n\n", rooms[i] -> pos[0], rooms[i] -> pos[1], rooms[i] -> neighbour1[0], rooms[i] -> neighbour1[1], rooms[i] -> neighbour2[0], rooms[i] -> neighbour2[1], rooms[i] -> neighbour3[0], rooms[i] -> neighbour3[1], rooms[i] -> cofferType, rooms[i] -> type);
     // } 
+
 
     Hero heroStruct;
     heroStruct.posX = rooms[0] -> pos[0];
@@ -270,13 +273,22 @@ int main(int argc, char *argv[]){
     heroStruct.life = 3; //MAX 3
     heroStruct.attack = 1; //MAX 6
 
+    Hero* apuntHero = &heroStruct;
+
+    Monster* monsterList = malloc(sizeof(struct Monster)); 
+    createMonster(monsterList,matrixSize,rooms,matrix);
+    createMonsterThread(monsterList,rooms,matrixSize,apuntHero);
+    
+    
+
+
     int index = indexCurrentRoom(rooms, matrixSize, heroStruct.posX, heroStruct.posY);
     int n1 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour1[0],rooms[index]->neighbour1[1]);
     int n2 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour2[0],rooms[index]->neighbour2[1]);
     int n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
     int roomCofferType = rooms[index] -> cofferType;
     bool isCofferOpened = rooms[index] -> isCofferOpened;
-    int monsterID = rooms[index] -> monsterId;
+    int idMonster = rooms[index] -> idMonster;
     int heroAttack = 0;
     int heroDamage = 0;
 
@@ -306,9 +318,9 @@ int main(int argc, char *argv[]){
                 switch (event.key.keysym.scancode) {
                 
                 case SDL_SCANCODE_SPACE:
-                    if (monsterID >= 0 && heroStruct.attack>0){
-                        //monsterlist[monsterID].lives--;
-                        //monsterlist[monsterID]->lives?
+                    if (idMonster >= 0 && heroStruct.attack>0){
+                        //monsterlist[idMonster].lives--;
+                        //monsterlist[idMonster]->lives?
                         heroStruct.attack--;
                         
                         heroAttack = 7; //Cantidad de renders pow attack
@@ -324,7 +336,7 @@ int main(int argc, char *argv[]){
                         n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
                         roomCofferType = rooms[index] -> cofferType;
                         isCofferOpened = rooms[index] -> isCofferOpened;
-                        monsterID = rooms[index] -> monsterId;
+                        idMonster = rooms[index] -> idMonster;
                     }
                     break;
                 case SDL_SCANCODE_A:
@@ -336,7 +348,7 @@ int main(int argc, char *argv[]){
                         n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
                         roomCofferType = rooms[index] -> cofferType;
                         isCofferOpened = rooms[index] -> isCofferOpened;
-                        monsterID = rooms[index] -> monsterId;
+                        idMonster = rooms[index] -> idMonster;
                     }
                     break;
                 case SDL_SCANCODE_S:
@@ -348,7 +360,7 @@ int main(int argc, char *argv[]){
                         n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
                         roomCofferType = rooms[index] -> cofferType;
                         isCofferOpened = rooms[index] -> isCofferOpened;
-                        monsterID = rooms[index] -> monsterId;
+                        idMonster = rooms[index] -> idMonster;
                     }
                     break;
                 case SDL_SCANCODE_D:
@@ -360,7 +372,7 @@ int main(int argc, char *argv[]){
                         n3 = locateNeighbor(rooms[index]->pos[0],rooms[index]->pos[1],rooms[index]->neighbour3[0],rooms[index]->neighbour3[1]);
                         roomCofferType = rooms[index] -> cofferType;
                         isCofferOpened = rooms[index] -> isCofferOpened;
-                        monsterID = rooms[index] -> monsterId;
+                        idMonster = rooms[index] -> idMonster;
                     }
                     break;
                 case SDL_SCANCODE_E:                    
@@ -490,7 +502,7 @@ int main(int argc, char *argv[]){
         }
 
         // Renderiza los monstruos
-        if(monsterID >= 0){
+        if(idMonster >= 0){
             SDL_RenderCopy(rend, monster, NULL, &monsterRect);
         }
 
