@@ -315,7 +315,7 @@ int main(int argc, char *argv[]){
     heroStruct.posX = rooms[0] -> pos[0];
     heroStruct.posY = rooms[0] -> pos[1];
     heroStruct.life = 5; //MAX 3
-    heroStruct.attack = 9; //MAX 6
+    heroStruct.attack = 1; //MAX 6
 
     Hero* apuntHero = &heroStruct;
 
