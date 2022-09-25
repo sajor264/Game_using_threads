@@ -314,7 +314,7 @@ int main(int argc, char *argv[]){
     Hero heroStruct;
     heroStruct.posX = rooms[0] -> pos[0];
     heroStruct.posY = rooms[0] -> pos[1];
-    heroStruct.life = 3; //MAX 3
+    heroStruct.life = 5; //MAX 3
     heroStruct.attack = 9; //MAX 6
 
     Hero* apuntHero = &heroStruct;
@@ -365,6 +365,7 @@ int main(int argc, char *argv[]){
                 
                 case SDL_SCANCODE_SPACE:
                     if ((rooms[indexCurrentRoom(rooms, matrixSize, heroStruct.posX , heroStruct.posY)] -> idMonster >= 0) && heroStruct.attack>0 ){
+                        if (monsterList[idMonster]->live==0) break;
                         monsterList[idMonster]->live --;
                         heroStruct.attack --;
                         heroAttack = 1; //Cantidad de renders pow attack
@@ -452,24 +453,28 @@ int main(int argc, char *argv[]){
                         }
                     }
                     break;
-                case SDL_SCANCODE_E:                    
-                    if(rooms[index] -> cofferType == 0){
-                        treasureMessage = 10;
-                        rooms[index] -> isCofferOpened = true;
-                        isCofferOpened = true;
-                        if((rand() % 2) == 0){
-                            heroStruct.attack++;
-                        } else {
-                            heroStruct.life++;
+                case SDL_SCANCODE_E: 
+                    if ( rooms[index] -> isCofferOpened == false ) {
+                        if(rooms[index] -> cofferType == 0){
+                            treasureMessage = 6;
+                            rooms[index] -> isCofferOpened = true;
+                            isCofferOpened = true;
+                            if((rand() % 2) == 0){
+                                heroStruct.attack++;
+                            } else {
+                                heroStruct.life++;
+                            }
                         }
-                    }
 
-                    if(rooms[index] -> cofferType == 1){
-                        trapMessage = 10;
-                        rooms[index] -> isCofferOpened = true;
-                        isCofferOpened = true;
-                        heroStruct.life--;
-                    }
+                        if(rooms[index] -> cofferType == 1){
+                            trapMessage = 6;
+                            rooms[index] -> isCofferOpened = true;
+                            isCofferOpened = true;
+                            heroStruct.life--;
+                        }
+
+                    }                 
+                    
                     break;
                 default:
                     break;
@@ -611,7 +616,7 @@ int main(int argc, char *argv[]){
         }
         if (trapMessage>0){
             SDL_RenderCopy(rend, trapDialog, NULL, &trapDialogRect);
-            treasureMessage--;
+            trapMessage--;
         }
                                 
 
