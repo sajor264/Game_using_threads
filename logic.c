@@ -221,8 +221,8 @@ void putRoom(Matrix *m, int i, int j, Rooms *rooms){
 }
 
 void removeRoom(Matrix *m, int i, int j, Rooms *rooms){
-    int remainingRooms = getRemainingRooms(m);
     m -> data[i*(m -> size) + j] = 0;
+    int remainingRooms = getRemainingRooms(m);
     rooms[(m -> size) - remainingRooms] -> pos[0] = -1;
     rooms[(m -> size) - remainingRooms] -> pos[1] = -1;
     rooms[(m -> size) - remainingRooms] -> cofferType = -1;
@@ -299,12 +299,7 @@ void createMap(Matrix* m, Rooms *rooms){
     if(createMapAux(m, i, j, rooms)){
         setNeighbours(m, rooms);   
     } else{
-        m -> data[i*(m->size) + j] = 0;
-        rooms[0] -> pos[0] = -1;
-        rooms[0] -> pos[1] = -1;
-        rooms[0] -> cofferType = -1;
-        rooms[0] -> type = -1;
-        rooms[0] -> idMonster = -1;
+        removeRoom(m, i, j, rooms);
         createMap(m, rooms);
     }
 }
@@ -527,7 +522,7 @@ void* monsterAdmin(void * ad){
 
 void createMonsterThread(Monster* monster, Rooms *rooms, int mSize, Hero* heroApunt){
     pthread_mutex_init(&lock, NULL);
-    MonsterAd* tempMoster = malloc(sizeof(struct MonsterAd));
+    MonsterAd* tempMoster = (MonsterAd *)malloc(sizeof(MonsterAd) * 16);
     pthread_t monsterThread[mSize/2];
     for(int i = 0; i < mSize/2 ; i++){
         tempMoster[i] -> pos = i;

@@ -301,12 +301,12 @@ int main(int argc, char *argv[]){
     int close = 0;
 
     // Create Map and Rooms
-    Rooms *rooms = malloc(sizeof(struct Rooms));
+    Rooms *rooms = (Rooms *)malloc(sizeof(Rooms) * 31);
     createMap(matrix, rooms);
 
 
     
-    //printMatrix(matrix);
+    // printMatrix(matrix);
     // for(int i = 0; i < matrixSize; i++){
     // printf("POS:\tx = %d y = %d\n N1:\tx = %d y = %d\n N2:\tx = %d y = %d\n N3:\tx = %d y = %d\n COFFER TYPE:\t %d\n ROOM TYPE:\t%d\n\n", rooms[i] -> pos[0], rooms[i] -> pos[1], rooms[i] -> neighbour1[0], rooms[i] -> neighbour1[1], rooms[i] -> neighbour2[0], rooms[i] -> neighbour2[1], rooms[i] -> neighbour3[0], rooms[i] -> neighbour3[1], rooms[i] -> cofferType, rooms[i] -> type);
     // } 
@@ -319,7 +319,7 @@ int main(int argc, char *argv[]){
 
     Hero* apuntHero = &heroStruct;
 
-    Monster* monsterList = malloc(sizeof(struct Monster)); 
+    Monster* monsterList = (Monster *)malloc(sizeof(Monster) * 16); 
     createMonster(monsterList,matrixSize,rooms,matrix);
     createMonsterThread(monsterList,rooms,matrixSize,apuntHero);
     
@@ -351,7 +351,7 @@ int main(int argc, char *argv[]){
             printf("\n\nYOU WON!!\n\n");
             close = 1;
         }
- 
+
         // Events management
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
@@ -660,6 +660,12 @@ int main(int argc, char *argv[]){
 
 
     }
+
+    free(matrix -> data);
+    free(matrix);
+    free(monsterList);
+    free(rooms);
+
     // destroy textures
     SDL_DestroyTexture(heroe);
     SDL_DestroyTexture(roomTexture);
