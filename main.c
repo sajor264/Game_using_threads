@@ -338,7 +338,10 @@ int main(int argc, char *argv[]){
     int trapMessage = 0;
     int treasureMessage = 0;
 
-    int sign = -1;
+    int contSignUp = -1;
+    int contSignDown = -1;
+    int contSignLeft = -1;
+    int contSignRight = -1;
 
     while (!close) {
         SDL_Event event;
@@ -387,8 +390,9 @@ int main(int argc, char *argv[]){
 
 
                         }else{
-                           // printf("Habitacion arriba bloqueada");
-                            sign = 2; // arriba 
+                            if (contSignUp <=0){
+                                 contSignUp = 5;
+                            }
                            
                         }
 
@@ -411,7 +415,9 @@ int main(int argc, char *argv[]){
                         }
                         else{
                             // izquierda
-                            sign = 0; // izquierda
+                            if (contSignLeft <=0){
+                                contSignLeft = 5;
+                            }
                             
                         }
                     }
@@ -430,7 +436,9 @@ int main(int argc, char *argv[]){
                             isCofferOpened = rooms[index] -> isCofferOpened;
                     
                         }else{
-                              sign = 3; // abajo
+                            if (contSignDown <=0){
+                                contSignDown = 5;
+                            }
                         }
                     }
                     break;
@@ -449,7 +457,9 @@ int main(int argc, char *argv[]){
                         
                         }else{
                              //printf("Habitacion derecha bloqueada");
-                                sign = 1; // derecha 
+                            if ( contSignRight <=0){
+                                 contSignRight = 5;
+                            }
                         }
                     }
                     break;
@@ -568,34 +578,40 @@ int main(int argc, char *argv[]){
         
         }
 
-         if(sign == 0){
+        if(contSignLeft > 0){
             // Izquierda
+             contSignLeft --;
              signLeftRect.x = -15;
              signLeftRect.y =(WINDOW_HEIGHT -  signLeftRect.h) / 2;
              SDL_RenderCopy(rend, signLeft, NULL, &signLeftRect);
          
            
-        }else if(sign == 1){
+        }
+        if(contSignRight > 0){
             // Derecha
+            contSignRight--;
              signRightRect.x = (WINDOW_WIDTH -  signRightRect.w) +15;
              signRightRect.y =(WINDOW_HEIGHT -   signRightRect.h) / 2;
              SDL_RenderCopy(rend, signRight, NULL, & signRightRect);
             
             
-        }else if(sign == 2){
+        }
+        if(contSignUp > 0){
             // Arriba
+             contSignUp--;
              signUpRect.x = (WINDOW_WIDTH -  signUpRect.w) / 2;
              signUpRect.y =-30;
              SDL_RenderCopy(rend, signUp, NULL, &signUpRect);
             
-        }else if(sign == 3){
+        }
+        if(contSignDown > 0){
             // Abajo
+            contSignDown--;
             signDownRect.x = (WINDOW_WIDTH -   signDownRect.w) / 2;
             signDownRect.y =(WINDOW_HEIGHT -    signDownRect.h)+35;
             SDL_RenderCopy(rend, signDown, NULL, & signDownRect);
         
         }
-        sign = -1;
 
         // Renderiza los tesoros / trampas
         if(roomCofferType == 0 && !isCofferOpened){
