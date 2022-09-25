@@ -93,6 +93,27 @@ int main(int argc, char *argv[]){
     SDL_Texture* doorRight = SDL_CreateTextureFromSurface(rend, surface);
     SDL_FreeSurface(surface);
 
+    //
+     // creates signUp texture
+    surface = IMG_Load("Images/signUp.png");
+    SDL_Texture* signUp = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_FreeSurface(surface);
+
+    // creates signDown texture
+    surface = IMG_Load("Images/signDown.png");
+    SDL_Texture* signDown = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_FreeSurface(surface);
+
+    // creates signLeft texture
+    surface = IMG_Load("Images/signLeft.png");
+    SDL_Texture* signLeft = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_FreeSurface(surface);
+
+     // creates signRight texture
+    surface = IMG_Load("Images/signRight.png");
+    SDL_Texture* signRight = SDL_CreateTextureFromSurface(rend, surface);
+    SDL_FreeSurface(surface);
+
 
     // creates openedTreasure texture
     surface = IMG_Load("Images/openedTreasure.png");
@@ -138,6 +159,10 @@ int main(int argc, char *argv[]){
     SDL_Rect doorDownRect;
     SDL_Rect doorLeftRect;
     SDL_Rect doorRightRect;
+    SDL_Rect signUpRect;
+    SDL_Rect signDownRect;
+    SDL_Rect signLeftRect;
+    SDL_Rect signRightRect;
     SDL_Rect closedTreasureRect;
     SDL_Rect closedTrapRect;
     SDL_Rect openedTreasureRect;
@@ -156,6 +181,12 @@ int main(int argc, char *argv[]){
     SDL_QueryTexture(doorDown, NULL, NULL, &doorDownRect.w, &doorDownRect.h);
     SDL_QueryTexture(doorRight, NULL, NULL, &doorRightRect.w, &doorRightRect.h);
     SDL_QueryTexture(doorLeft, NULL, NULL, &doorLeftRect.w, &doorLeftRect.h);
+
+     SDL_QueryTexture(signUp, NULL, NULL, &signUpRect.w, &signUpRect.h);
+    SDL_QueryTexture(signDown, NULL, NULL, &signDownRect.w, &signDownRect.h);
+    SDL_QueryTexture(signRight, NULL, NULL, &signRightRect.w, &signRightRect.h);
+    SDL_QueryTexture(signLeft, NULL, NULL, &signLeftRect.w, &signLeftRect.h);
+
     SDL_QueryTexture(closedTreasure, NULL, NULL, &closedTreasureRect.w, &closedTreasureRect.h);
     SDL_QueryTexture(closedTrap, NULL, NULL, &closedTrapRect.w, &closedTrapRect.h);
     SDL_QueryTexture(openedTreasure, NULL, NULL, &openedTreasureRect.w, &openedTreasureRect.h);
@@ -194,6 +225,18 @@ int main(int argc, char *argv[]){
 
     doorRightRect.w /= 1;
     doorRightRect.h /= 1;
+
+    signUpRect.w /= 1;
+    signUpRect.h /= 1;
+
+    signDownRect.w /= 1;
+    signDownRect.h /= 1;
+
+    signLeftRect.w /= 1;
+    signLeftRect.h /= 1;
+
+    signRightRect.w /= 1;
+    signRightRect.h /= 1;
 
     closedTreasureRect.w /= 12;
     closedTreasureRect.h /= 12;
@@ -295,6 +338,8 @@ int main(int argc, char *argv[]){
     int trapMessage = 0;
     int treasureMessage = 0;
 
+    int sign = -1;
+
     while (!close) {
         SDL_Event event;
 
@@ -341,7 +386,9 @@ int main(int argc, char *argv[]){
 
 
                         }else{
-                           // printf("Habitacion abajo bloqueada");
+                           // printf("Habitacion arriba bloqueada");
+                            sign = 2; // arriba 
+                           
                         }
 
                       
@@ -362,7 +409,9 @@ int main(int argc, char *argv[]){
                 
                         }
                         else{
-                            // printf("Habitacion izquierda bloqueada");
+                            // izquierda
+                            sign = 0; // izquierda
+                            
                         }
                     }
                     break;
@@ -380,7 +429,7 @@ int main(int argc, char *argv[]){
                             isCofferOpened = rooms[index] -> isCofferOpened;
                     
                         }else{
-                             // printf("Habitacion abajo bloqueada");
+                              sign = 3; // abajo
                         }
                     }
                     break;
@@ -399,6 +448,7 @@ int main(int argc, char *argv[]){
                         
                         }else{
                              //printf("Habitacion derecha bloqueada");
+                                sign = 1; // derecha 
                         }
                     }
                     break;
@@ -512,6 +562,33 @@ int main(int argc, char *argv[]){
              SDL_RenderCopy(rend, doorDown, NULL, &  doorDownRect);
         
         }
+
+         if(sign == 0){
+            // Izquierda
+             signLeftRect.x = -15;
+             signLeftRect.y =(WINDOW_HEIGHT -  signLeftRect.h) / 2;
+             SDL_RenderCopy(rend, signLeft, NULL, &signLeftRect);
+           
+        }else if(sign == 1){
+            // Derecha
+             signRightRect.x = (WINDOW_WIDTH -  signRightRect.w) +15;
+             signRightRect.y =(WINDOW_HEIGHT -   signRightRect.h) / 2;
+             SDL_RenderCopy(rend, signRight, NULL, & signRightRect);
+            
+        }else if(sign == 2){
+            // Arriba
+             signUpRect.x = (WINDOW_WIDTH -  signUpRect.w) / 2;
+             signUpRect.y =-30;
+             SDL_RenderCopy(rend, signUp, NULL, &signUpRect);
+            
+        }else if(sign == 3){
+            // Abajo
+            signDownRect.x = (WINDOW_WIDTH -   signDownRect.w) / 2;
+            signDownRect.y =(WINDOW_HEIGHT -    signDownRect.h)+35;
+            SDL_RenderCopy(rend, signDown, NULL, & signDownRect);
+        
+        }
+        sign = -1;
 
         // Renderiza los tesoros / trampas
         if(roomCofferType == 0 && !isCofferOpened){
