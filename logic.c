@@ -528,7 +528,7 @@ void* monsterAdmin(void * ad){
 
 void createMonsterThread(Monster* monster, Rooms *rooms, int mSize, Hero* heroApunt){
     pthread_mutex_init(&lock, NULL);
-    MonsterAd* tempMoster = malloc(sizeof(struct MonsterAd));
+    MonsterAd* tempMoster = (MonsterAd *)malloc(sizeof(MonsterAd) * 16);
     pthread_t monsterThread[mSize/2];
     for(int i = 0; i < mSize/2 ; i++){
         tempMoster[i] -> pos = i;

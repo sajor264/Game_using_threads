@@ -301,7 +301,7 @@ int main(int argc, char *argv[]){
     int close = 0;
 
     // Create Map and Rooms
-    Rooms *rooms = malloc(sizeof(struct Rooms)*30);
+    Rooms *rooms = (Rooms *)malloc(sizeof(Rooms) * 31);
     createMap(matrix, rooms);
 
 
@@ -319,7 +319,7 @@ int main(int argc, char *argv[]){
 
     Hero* apuntHero = &heroStruct;
 
-    Monster* monsterList = malloc(sizeof(struct Monster)*15); 
+    Monster* monsterList = (Monster *)malloc(sizeof(Monster) * 16); 
     createMonster(monsterList,matrixSize,rooms,matrix);
     createMonsterThread(monsterList,rooms,matrixSize,apuntHero);
     
@@ -351,7 +351,7 @@ int main(int argc, char *argv[]){
             printf("\n\nYOU WON!!\n\n");
             close = 1;
         }
- 
+
         // Events management
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
