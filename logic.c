@@ -39,6 +39,7 @@ typedef struct Monster{
     int x;
     int y;
     int live;
+    bool wait;
 }Monster[15];
 
 typedef struct MonsterAd{
@@ -364,6 +365,7 @@ void createMonster(Monster* monsterList, int mSize, Rooms *rooms, Matrix *m){
                 monsterList[i]->live = 3;
                 monsterList[i]->x = ri;
                 monsterList[i]->y = rj;
+                monsterList[i]->wait = false;
                 x = false;
             }
             
@@ -509,10 +511,9 @@ void* monsterAdmin(void * ad){
             }
             
         }
-        
-        
+        datos->Monster[datos->pos]->wait=true;
         sleep(1);
-        /* code */
+        datos->Monster[datos->pos]->wait=false;
     }
     pthread_exit(0);
     return 0;
