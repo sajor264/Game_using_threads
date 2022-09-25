@@ -568,12 +568,14 @@ int main(int argc, char *argv[]){
              signLeftRect.x = -15;
              signLeftRect.y =(WINDOW_HEIGHT -  signLeftRect.h) / 2;
              SDL_RenderCopy(rend, signLeft, NULL, &signLeftRect);
+         
            
         }else if(sign == 1){
             // Derecha
              signRightRect.x = (WINDOW_WIDTH -  signRightRect.w) +15;
              signRightRect.y =(WINDOW_HEIGHT -   signRightRect.h) / 2;
              SDL_RenderCopy(rend, signRight, NULL, & signRightRect);
+            
             
         }else if(sign == 2){
             // Arriba
@@ -663,6 +665,10 @@ int main(int argc, char *argv[]){
     SDL_DestroyTexture(doorDown);
     SDL_DestroyTexture(doorLeft);
     SDL_DestroyTexture(doorRight);
+    SDL_DestroyTexture(signUp);
+    SDL_DestroyTexture(signDown);
+    SDL_DestroyTexture(signLeft);
+    SDL_DestroyTexture(signRight);
     SDL_DestroyTexture(openedTreasure);
     SDL_DestroyTexture(closedTreasure);
     SDL_DestroyTexture(closedTrap);
