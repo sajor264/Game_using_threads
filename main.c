@@ -365,6 +365,7 @@ int main(int argc, char *argv[]){
                 
                 case SDL_SCANCODE_SPACE:
                     if ((rooms[indexCurrentRoom(rooms, matrixSize, heroStruct.posX , heroStruct.posY)] -> idMonster >= 0) && heroStruct.attack>0 ){
+                        if (monsterList[idMonster]->live==0) break;
                         monsterList[idMonster]->live --;
                         heroStruct.attack --;
                         heroAttack = 1; //Cantidad de renders pow attack
