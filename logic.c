@@ -386,14 +386,12 @@ void imprimirMos(Monster* mos, Matrix *m){
 bool auxItsRoomFree(Monster* monster, Rooms *rooms, int id, int mSize, int x , int y){
     for(int i = 0; i < mSize ; i++){
         if(rooms[i]->pos[0] == x && rooms[i]->pos[1] == y){
-            pthread_mutex_lock(&lock);
             if (rooms[i]->idMonster == -1 && rooms[i]->type != 0 && rooms[i]->type != 2 )
             {    
+               pthread_mutex_lock(&lock);
                rooms[i]->idMonster = id;
                pthread_mutex_unlock(&lock);
                return true;
-            }else{
-            pthread_mutex_unlock(&lock);
             }
             
         }
